@@ -34,7 +34,7 @@ export default function Home() {
           className="text-xs"
           style={{ color: '#2d3748', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
         >
-          © 2025 ALIASKIT SYSTEMS INC.
+          © 2026 ALIASKIT SYSTEMS INC.
         </span>
       </footer>
     </>

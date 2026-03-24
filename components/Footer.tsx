@@ -111,7 +111,7 @@ export default function Footer() {
             className="text-xs"
             style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
           >
-            © 2025 ALIASKIT SYSTEMS INC.
+            © 2026 ALIASKIT SYSTEMS INC.
           </span>
           <div className="flex gap-4">
             {['code', 'terminal'].map((icon) => (
