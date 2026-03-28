@@ -9,6 +9,7 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') ?? '/dashboard'
+  const registered = searchParams.get('registered') === 'true'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -56,6 +57,14 @@ function LoginForm() {
         >
           Sign in
         </h1>
+
+        {registered && (
+          <div className="glass-panel px-4 py-3 mb-4">
+            <p className="text-xs" style={{ color: '#39FF14', fontFamily: 'var(--font-outfit)' }}>
+              Account created — check your email and confirm before signing in.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">

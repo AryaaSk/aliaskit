@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
     setSuccess(true)
     setLoading(false)
-    setTimeout(() => router.push('/login'), 3000)
+    setTimeout(() => router.push('/login?registered=true'), 3000)
   }
 
   const inputStyle = {
