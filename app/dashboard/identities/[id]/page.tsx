@@ -58,6 +58,17 @@ export default function IdentityDetailPage() {
   const [loadingIdentity, setLoadingIdentity] = useState(true)
   const [tab, setTab] = useState<'overview' | 'email' | 'sms'>('overview')
 
+  // --- Overview actions state ---
+  const [provisioningPhone, setProvisioningPhone] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editStatus, setEditStatus] = useState<'active' | 'suspended'>('active')
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
   // --- Email state ---
   const [emails, setEmails] = useState<Email[]>([])
   const [emailPage, setEmailPage] = useState(1)
@@ -237,6 +248,58 @@ export default function IdentityDetailPage() {
     if (t === 'sms') { setSmsPage(1) }
   }
 
+  async function handleProvisionPhone() {
+    setProvisioningPhone(true)
+    setPhoneError('')
+    const res = await fetch(`/api/dashboard/identities/${id}/phone`, { method: 'POST' })
+    if (res.ok) {
+      const updated = await res.json()
+      setIdentity(updated)
+    } else {
+      const data = await res.json().catch(() => ({}))
+      setPhoneError((data as { error?: string }).error ?? 'Failed to provision phone')
+    }
+    setProvisioningPhone(false)
+  }
+
+  function startEditing() {
+    if (!identity) return
+    setEditName(identity.name)
+    setEditStatus(identity.status as 'active' | 'suspended')
+    setSaveError('')
+    setEditing(true)
+  }
+
+  async function handleSaveEdit() {
+    setSaving(true)
+    setSaveError('')
+    const res = await fetch(`/api/dashboard/identities/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: editName, status: editStatus }),
+    })
+    if (res.ok) {
+      const updated = await res.json()
+      setIdentity(updated)
+      setEditing(false)
+    } else {
+      const data = await res.json().catch(() => ({}))
+      setSaveError((data as { error?: string }).error ?? 'Failed to save')
+    }
+    setSaving(false)
+  }
+
+  async function handleDelete() {
+    setDeleting(true)
+    const res = await fetch(`/api/dashboard/identities/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      router.push('/dashboard/identities')
+    } else {
+      setDeleting(false)
+      setShowDeleteConfirm(false)
+    }
+  }
+
   const statusColor = (s: string) =>
     s === 'active' ? '#39FF14' : s === 'suspended' ? '#FF0055' : '#64748B'
 
@@ -290,37 +353,144 @@ export default function IdentityDetailPage() {
       {/* ─── Overview tab ─── */}
       {tab === 'overview' && (
         <div className="glass-panel p-6">
+          {/* Header with actions */}
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1
-                className="text-xl font-bold tracking-widest uppercase mb-1"
-                style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
-              >
-                {identity.name}
-              </h1>
-              <span
-                className="inline-flex items-center gap-1.5 text-xs"
-                style={{ fontFamily: 'var(--font-jetbrains-mono)' }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusColor(identity.status) }} />
-                <span style={{ color: statusColor(identity.status) }}>{identity.status.toUpperCase()}</span>
-              </span>
+              {editing ? (
+                <div className="flex flex-col gap-3">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                    className="text-xl font-bold tracking-widest uppercase px-3 py-1"
+                    style={{
+                      fontFamily: 'var(--font-syncopate)',
+                      color: '#E2E8F0',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(0,240,255,0.2)',
+                      borderRadius: 4,
+                      outline: 'none',
+                    }}
+                  />
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={editStatus}
+                      onChange={e => setEditStatus(e.target.value as 'active' | 'suspended')}
+                      className="text-xs px-2 py-1"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(0,240,255,0.2)',
+                        borderRadius: 4,
+                        color: '#E2E8F0',
+                        fontFamily: 'var(--font-jetbrains-mono)',
+                        outline: 'none',
+                      }}
+                    >
+                      <option value="active">ACTIVE</option>
+                      <option value="suspended">SUSPENDED</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h1
+                    className="text-xl font-bold tracking-widest uppercase mb-1"
+                    style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
+                  >
+                    {identity.name}
+                  </h1>
+                  <span
+                    className="inline-flex items-center gap-1.5 text-xs"
+                    style={{ fontFamily: 'var(--font-jetbrains-mono)' }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusColor(identity.status) }} />
+                    <span style={{ color: statusColor(identity.status) }}>{identity.status.toUpperCase()}</span>
+                  </span>
+                </>
+              )}
             </div>
-            <code className="text-xs px-3 py-1" style={{
-              background: 'rgba(0,240,255,0.05)',
-              border: '1px solid rgba(0,240,255,0.1)',
-              borderRadius: 4,
-              color: '#64748B',
-              fontFamily: 'var(--font-jetbrains-mono)',
-            }}>
-              {identity.id}
-            </code>
+            <div className="flex items-center gap-2">
+              {editing ? (
+                <>
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={saving}
+                    className="btn-cyber px-4 py-1.5 text-xs disabled:opacity-50"
+                  >
+                    {saving ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="text-xs px-4 py-1.5 rounded transition-colors"
+                    style={{ color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-outfit)' }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={startEditing}
+                    className="text-xs px-4 py-1.5 rounded transition-colors"
+                    style={{ color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-outfit)' }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="text-xs px-4 py-1.5 rounded transition-colors"
+                    style={{ color: '#FF0055', border: '1px solid rgba(255,0,85,0.15)', fontFamily: 'var(--font-outfit)' }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+          {saveError && (
+            <p className="text-xs mb-4" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>{saveError}</p>
+          )}
+
+          {/* Delete confirmation */}
+          {showDeleteConfirm && (
+            <div className="mb-4 p-4 rounded-lg" style={{ background: 'rgba(255,0,85,0.06)', border: '1px solid rgba(255,0,85,0.15)' }}>
+              <p className="text-sm mb-3" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
+                Delete <strong>{identity.name}</strong>? This will release the phone number and cannot be undone.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="text-xs px-4 py-1.5 rounded disabled:opacity-50"
+                  style={{ background: 'rgba(255,0,85,0.15)', color: '#FF0055', fontFamily: 'var(--font-outfit)', border: '1px solid rgba(255,0,85,0.3)' }}
+                >
+                  {deleting ? 'Deleting...' : 'Yes, delete'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="text-xs px-4 py-1.5 rounded"
+                  style={{ color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-outfit)' }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          <code className="text-xs px-3 py-1 mb-6 inline-block" style={{
+            background: 'rgba(0,240,255,0.05)',
+            border: '1px solid rgba(0,240,255,0.1)',
+            borderRadius: 4,
+            color: '#64748B',
+            fontFamily: 'var(--font-jetbrains-mono)',
+          }}>
+            {identity.id}
+          </code>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6 mt-4">
             {[
               { label: 'Email', value: identity.email },
-              { label: 'Phone', value: identity.phone_number ?? '—' },
               { label: 'Date of Birth', value: identity.date_of_birth ?? '—' },
               { label: 'Created', value: new Date(identity.created_at).toLocaleDateString() },
             ].map(({ label, value }) => (
@@ -333,6 +503,30 @@ export default function IdentityDetailPage() {
                 </p>
               </div>
             ))}
+            {/* Phone — with provision button */}
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider mb-1" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+                Phone
+              </p>
+              {identity.phone_number ? (
+                <p className="text-sm" style={{ color: '#E2E8F0', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  {identity.phone_number}
+                </p>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    onClick={handleProvisionPhone}
+                    disabled={provisioningPhone}
+                    className="btn-cyber px-3 py-1 text-xs w-fit disabled:opacity-50"
+                  >
+                    {provisioningPhone ? 'Provisioning...' : 'Provision number'}
+                  </button>
+                  {phoneError && (
+                    <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>{phoneError}</p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {Object.keys(identity.metadata ?? {}).length > 0 && (
