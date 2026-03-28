@@ -1,0 +1,8 @@
+name = "aliaskit-email-inbound"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+
+[triggers]
+# This worker is triggered by Cloudflare Email Routing rules, not HTTP routes.
+# Configure Email Routing in the Cloudflare dashboard to send *@aliaskit.com
+# emails to this worker.

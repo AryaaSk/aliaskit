@@ -1,65 +1,40 @@
 import type { NextRequest } from 'next/server'
 import { getSupabaseServerClient } from '@/lib/supabase-server'
-import { Webhook } from 'svix'
 
-const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET ?? ''
+const INBOUND_EMAIL_SECRET = process.env.INBOUND_EMAIL_SECRET ?? ''
 
 export async function POST(request: NextRequest) {
-  // --- Verify Resend webhook signature via Svix ---
-  const svixId = request.headers.get('svix-id') ?? ''
-  const svixTimestamp = request.headers.get('svix-timestamp') ?? ''
-  const svixSignature = request.headers.get('svix-signature') ?? ''
-
-  if (!RESEND_WEBHOOK_SECRET) {
-    console.error('RESEND_WEBHOOK_SECRET is not set')
-    return Response.json({ error: 'Webhook not configured' }, { status: 500 })
+  // Verify shared secret — any inbound email forwarder (Cloudflare Worker, etc.)
+  // must send: Authorization: Bearer <INBOUND_EMAIL_SECRET>
+  if (!INBOUND_EMAIL_SECRET) {
+    console.error('INBOUND_EMAIL_SECRET is not configured')
+    return Response.json({ error: 'Inbound email not configured' }, { status: 500 })
   }
 
-  let rawBody: string
-  try {
-    rawBody = await request.text()
-  } catch {
-    return Response.json({ error: 'Failed to read body' }, { status: 400 })
+  const authHeader = request.headers.get('authorization') ?? ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+  if (token !== INBOUND_EMAIL_SECRET) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   let payload: Record<string, unknown>
   try {
-    const wh = new Webhook(RESEND_WEBHOOK_SECRET)
-    payload = wh.verify(rawBody, {
-      'svix-id': svixId,
-      'svix-timestamp': svixTimestamp,
-      'svix-signature': svixSignature,
-    }) as Record<string, unknown>
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err)
-    return Response.json({ error: 'Invalid signature' }, { status: 401 })
+    payload = await request.json()
+  } catch {
+    return Response.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  // --- Parse Resend inbound email payload ---
-  // Resend wraps the email data inside a `data` envelope
-  const eventType = payload.type as string | undefined
-  if (eventType !== 'email.received') {
-    // Acknowledge non-inbound events gracefully
-    return Response.json({ received: true, stored: false })
-  }
+  // Expected fields from the Cloudflare Email Worker (or any forwarder)
+  const to = (payload.to as string | undefined)?.toLowerCase()
+  const from = (payload.from as string) ?? ''
+  const subject = (payload.subject as string) ?? ''
+  const bodyText = (payload.text as string | null) ?? null
+  const bodyHtml = (payload.html as string | null) ?? null
+  const headers = (payload.headers as Record<string, unknown>) ?? {}
 
-  const data = payload.data as Record<string, unknown> | undefined
-  if (!data) {
-    return Response.json({ error: 'Missing data in payload' }, { status: 400 })
-  }
-
-  // Resend sends `to` as an array of strings
-  const toArr = data.to as string[] | undefined
-  const to = toArr?.[0]?.toLowerCase()
   if (!to) {
     return Response.json({ error: 'Missing "to" field' }, { status: 400 })
   }
-
-  const from = (data.from as string) ?? ''
-  const subject = (data.subject as string) ?? ''
-  const bodyText = (data.text as string | null) ?? null
-  const bodyHtml = (data.html as string | null) ?? null
-  const headers = (data.headers as Record<string, unknown>) ?? {}
 
   const supabase = getSupabaseServerClient()
 
@@ -72,7 +47,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (idErr || !identity) {
-    // No identity found — acknowledge but don't error (could be spam)
+    // No identity for this address — ack so the caller doesn't retry
     return Response.json({ received: true, stored: false })
   }
 
@@ -89,6 +64,7 @@ export async function POST(request: NextRequest) {
   })
 
   if (insertErr) {
+    console.error('Failed to store inbound email:', insertErr)
     return Response.json({ error: insertErr.message }, { status: 500 })
   }
 
