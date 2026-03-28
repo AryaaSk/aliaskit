@@ -2,34 +2,34 @@ const pillars = [
   {
     icon: 'verified_user',
     title: 'Identity Infrastructure',
-    body: 'Agents are independent entities, not compute extensions. Real identity unlocks real trust and real capabilities: service signups, account recovery, contract negotiation.',
+    body: 'Agents are independent entities, not compute extensions. Real identity unlocks real capabilities: service signups, account recovery, and autonomous operation on the internet.',
     points: [
-      'Verified agent identity (name, email, phone)',
-      'Real email address (receive + send)',
-      'Real phone number (receive SMS)',
-      'Metadata for tracking agent context',
+      'Verified name, email, and phone number',
+      'Real inbound email — receive anything',
+      'Real inbound SMS — receive any code',
+      'Metadata fields for agent context',
     ],
   },
   {
     icon: 'terminal',
     title: 'Ship Identity in Minutes',
-    body: 'Provision a complete agent identity faster than debugging SMTP. 30 lines of code. One REST call. Works everywhere — Node, Deno, Bun, browsers. Zero dependencies.',
+    body: 'Provision a complete agent identity faster than configuring SMTP. 30 lines of code. One REST call. Works with Node, Deno, Bun, and any HTTP client — zero dependencies.',
     points: [
       'No KYC forms or verification delays',
       'No SMTP config or phone routing expertise',
-      'SDK works in all runtimes',
-      'REST API for custom integrations',
+      'SDK for Node, Python, and REST',
+      'Webhooks for real-time message events',
     ],
   },
   {
     icon: 'inventory_2',
     title: 'One Provider, One Bill',
-    body: 'Email + phone together, at a price point that makes bundling more valuable than the components. Free tier: 10 identities/month. Pro: unlimited at $50/mo.',
+    body: 'Email and phone together in a single API, at a price that makes bundling more valuable than piecing together Twilio and SendGrid yourself.',
     points: [
       'No vendor fragmentation (Twilio + SendGrid)',
-      '10x cheaper than enterprise services',
-      'Free tier for experimentation',
       'Transparent pricing, no hidden fees',
+      'Free tier: 10 identities/month',
+      'Pro: unlimited at $50/month flat',
     ],
   },
 ]
@@ -38,19 +38,25 @@ export default function FeatureCards() {
   return (
     <section className="w-full max-w-[1200px] mx-auto px-6 lg:px-0 pb-20">
       {/* Section header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-14">
         <p
-          className="text-xs uppercase tracking-[0.2em] mb-3"
+          className="text-[10px] uppercase tracking-[0.25em] mb-3"
           style={{ color: '#00F0FF', fontFamily: 'var(--font-syncopate), sans-serif' }}
         >
           Why AliasKit
         </p>
         <h2
-          className="text-2xl lg:text-3xl font-bold text-white uppercase"
+          className="text-2xl lg:text-3xl font-bold text-white uppercase mb-4"
           style={{ fontFamily: 'var(--font-syncopate), sans-serif' }}
         >
           Built for Autonomous Agents.
         </h2>
+        <p
+          className="text-sm max-w-md mx-auto"
+          style={{ color: '#475569', fontFamily: 'var(--font-outfit), sans-serif' }}
+        >
+          Everything your agent needs to operate as an independent digital entity — without the setup nightmare.
+        </p>
       </div>
 
       {/* 3-pillar grid */}
@@ -58,21 +64,21 @@ export default function FeatureCards() {
         {pillars.map((pillar) => (
           <div
             key={pillar.title}
-            className="glass-panel p-6 lg:p-8 flex flex-col gap-4"
+            className="glass-panel feature-card p-6 lg:p-8 flex flex-col gap-5"
           >
             {/* Icon */}
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: 'rgba(0, 240, 255, 0.08)', border: '1px solid rgba(0, 240, 255, 0.12)' }}
+              className="feature-icon-container w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(0, 240, 255, 0.08)', border: '1px solid rgba(0, 240, 255, 0.15)' }}
             >
-              <span className="material-symbols-outlined" style={{ color: '#00F0FF', fontSize: 20 }}>
+              <span className="material-symbols-outlined" style={{ color: '#00F0FF', fontSize: 22 }}>
                 {pillar.icon}
               </span>
             </div>
 
             {/* Title */}
             <h3
-              className="text-base font-bold text-white uppercase"
+              className="text-sm font-bold text-white uppercase tracking-wide"
               style={{ fontFamily: 'var(--font-syncopate), sans-serif' }}
             >
               {pillar.title}
@@ -87,14 +93,19 @@ export default function FeatureCards() {
             </p>
 
             {/* Points */}
-            <ul className="flex flex-col gap-2 mt-auto pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            <ul className="flex flex-col gap-2.5 mt-auto pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
               {pillar.points.map((point) => (
                 <li
                   key={point}
-                  className="flex items-start gap-2 text-xs"
+                  className="flex items-start gap-2.5 text-xs"
                   style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif' }}
                 >
-                  <span style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono), monospace' }}>→</span>
+                  <span
+                    className="mt-0.5 flex-shrink-0"
+                    style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+                  >
+                    →
+                  </span>
                   {point}
                 </li>
               ))}
