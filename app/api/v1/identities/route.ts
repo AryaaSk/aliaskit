@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
       status: 'active',
       metadata,
       api_key_id: auth.apiKeyId,
+      user_id: auth.userId,
     })
     .select()
     .single()
