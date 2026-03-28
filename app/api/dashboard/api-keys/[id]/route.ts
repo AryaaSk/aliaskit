@@ -13,6 +13,7 @@ export async function DELETE(request: Request, { params }: Ctx) {
     .from('api_keys')
     .update({ revoked_at: new Date().toISOString() })
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .is('revoked_at', null)
     .select('id')
     .single()

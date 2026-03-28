@@ -14,6 +14,7 @@ export async function GET(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 
@@ -66,6 +67,7 @@ export async function PATCH(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 
@@ -99,6 +101,7 @@ export async function DELETE(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 

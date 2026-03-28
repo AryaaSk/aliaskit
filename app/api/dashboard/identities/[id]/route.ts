@@ -13,6 +13,7 @@ export async function GET(request: Request, { params }: Ctx) {
     .from('identities')
     .select('*')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 

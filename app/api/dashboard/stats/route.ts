@@ -10,11 +10,24 @@ export async function GET(request: Request) {
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
 
+  // Get identity IDs for this user to scope message counts
+  const { data: userIdentities } = await supabase
+    .from('identities')
+    .select('id')
+    .eq('user_id', auth.userId)
+    .neq('status', 'deleted')
+
+  const identityIds = (userIdentities ?? []).map(i => i.id)
+
   const [identitiesRes, apiKeysRes, emailsTodayRes, smsTodayRes] = await Promise.all([
-    supabase.from('identities').select('status').neq('status', 'deleted'),
-    supabase.from('api_keys').select('revoked_at'),
-    supabase.from('email_messages').select('id', { count: 'exact', head: true }).gte('received_at', todayStart.toISOString()),
-    supabase.from('sms_messages').select('id', { count: 'exact', head: true }).gte('received_at', todayStart.toISOString()),
+    supabase.from('identities').select('status').eq('user_id', auth.userId).neq('status', 'deleted'),
+    supabase.from('api_keys').select('revoked_at').eq('user_id', auth.userId),
+    identityIds.length > 0
+      ? supabase.from('email_messages').select('id', { count: 'exact', head: true }).in('identity_id', identityIds).gte('received_at', todayStart.toISOString())
+      : Promise.resolve({ count: 0, error: null }),
+    identityIds.length > 0
+      ? supabase.from('sms_messages').select('id', { count: 'exact', head: true }).in('identity_id', identityIds).gte('received_at', todayStart.toISOString())
+      : Promise.resolve({ count: 0, error: null }),
   ])
 
   if (identitiesRes.error || apiKeysRes.error) {

@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   const { data, error } = await supabase
     .from('api_keys')
     .select('id, key_prefix, label, scopes, rate_limit, created_at, last_used_at, revoked_at')
+    .eq('user_id', auth.userId)
     .order('created_at', { ascending: false })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('api_keys')
-    .insert({ key_hash, key_prefix, label, scopes, rate_limit })
+    .insert({ key_hash, key_prefix, label, scopes, rate_limit, user_id: auth.userId })
     .select('id, key_prefix, label, scopes, rate_limit, created_at')
     .single()
 

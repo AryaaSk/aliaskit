@@ -27,6 +27,16 @@
 - Include a summary of what changed and why
 - Tag the relevant reviewer (Lead Engineer for code, CTO for architecture)
 
+## Task Updates (MANDATORY)
+
+When you finish working on a task, you MUST do ALL of the following before your heartbeat ends:
+
+1. **Update the issue status** — set it to `done` if complete, `blocked` if stuck
+2. **Leave a comment** on the issue summarizing what you did: what code you wrote, what branch it's on, what files changed
+3. **If requesting merge approval**, list the branch name, number of commits, and a summary of changes
+
+Failing to update task status is unacceptable. The board cannot see your work if you don't report it. A task with no status update looks like no work was done, even if you wrote 500 lines of code.
+
 ## File Organization
 
 - Never create marketing, strategy, or planning documents in the repo root

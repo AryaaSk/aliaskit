@@ -15,6 +15,7 @@ export default function AuthCallbackPage() {
     // onAuthStateChange fires once the token in the URL hash is exchanged for a session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
+        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
         document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
         router.replace('/dashboard')
       }
@@ -28,6 +29,7 @@ export default function AuthCallbackPage() {
         return
       }
       if (session) {
+        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
         document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
         router.replace('/dashboard')
       }

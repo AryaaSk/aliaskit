@@ -15,7 +15,19 @@ export async function GET(request: Request, { params }: Ctx) {
 
   const supabase = getSupabaseServerClient()
 
-  // Check if messages table exists; gracefully return empty if not yet provisioned
+  // Verify identity belongs to this user
+  const { data: identity, error: idErr } = await supabase
+    .from('identities')
+    .select('id')
+    .eq('id', id)
+    .eq('user_id', auth.userId)
+    .neq('status', 'deleted')
+    .single()
+
+  if (idErr || !identity) {
+    return Response.json({ data: [] })
+  }
+
   const table = channel === 'sms' ? 'sms_messages' : 'email_messages'
   const columns = channel === 'sms' ? 'id, from, body, received_at' : 'id, from, subject, body, received_at'
   const { data, error } = await supabase
@@ -26,7 +38,6 @@ export async function GET(request: Request, { params }: Ctx) {
     .range(offset, offset + limit - 1)
 
   if (error) {
-    // Table may not exist yet in this phase; return empty gracefully
     return Response.json({ data: [] })
   }
 
