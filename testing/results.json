@@ -1,8 +1,8 @@
 {
-  "runAt": "2026-03-28T15:46:16.366Z",
+  "runAt": "2026-03-28T20:13:21.685Z",
   "summary": {
-    "pass": 7,
-    "fail": 2,
+    "pass": 9,
+    "fail": 0,
     "warn": 0,
     "error": 0,
     "total": 9
@@ -11,7 +11,7 @@
     {
       "page": "/",
       "status": "pass",
-      "notes": "HTTP 200 | title=\"AliasKit — Identity Layer for Autonomous Agents\" | h1=\"A completehuman identityfor your agent.\""
+      "notes": "HTTP 200 | title=\"AliasKit — Identity Layer for Autonomous Agents\" | h1=\"The identityprimitivefor autonomous agents.\""
     },
     {
       "page": "/login",
@@ -30,23 +30,23 @@
     },
     {
       "page": "/login (submit)",
-      "status": "fail",
-      "notes": "Redirected to: http://localhost:3000/login | error=\"\""
+      "status": "pass",
+      "notes": "Redirected to: http://localhost:3000/dashboard | error=\"\""
     },
     {
       "page": "/dashboard",
-      "status": "fail",
-      "notes": "HTTP 200 | URL: http://localhost:3000/login?next=%2Fdashboard | hasContent=false"
+      "status": "pass",
+      "notes": "HTTP 200 | URL: http://localhost:3000/dashboard | hasContent=true"
     },
     {
       "page": "/dashboard/identities",
       "status": "pass",
-      "notes": "HTTP 200 | URL: http://localhost:3000/login?next=%2Fdashboard%2Fidentities"
+      "notes": "HTTP 200 | URL: http://localhost:3000/dashboard/identities"
     },
     {
       "page": "/dashboard/api-keys",
       "status": "pass",
-      "notes": "HTTP 200 | URL: http://localhost:3000/login?next=%2Fdashboard%2Fapi-keys"
+      "notes": "HTTP 200 | URL: http://localhost:3000/dashboard/api-keys"
     },
     {
       "page": "/dashboard (unauthenticated)",
@@ -54,7 +54,5 @@
       "notes": "Redirected to: http://localhost:3000/login?next=%2Fdashboard"
     }
   ],
-  "consoleErrors": [
-    "Failed to load resource: the server responded with a status of 400 ()"
-  ]
+  "consoleErrors": []
 }
