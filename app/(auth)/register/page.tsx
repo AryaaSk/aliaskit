@@ -65,50 +65,50 @@ export default function RegisterPage() {
   }
 
   const inputStyle = {
-    background: 'rgba(5, 9, 20, 0.8)',
-    border: '1px solid rgba(0, 240, 255, 0.2)',
-    borderRadius: 4,
-    color: '#E2E8F0',
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.10)',
+    borderRadius: 6,
+    color: '#FFFFFF',
     fontFamily: 'var(--font-jetbrains-mono)',
+    outline: 'none',
+    transition: 'border-color 0.15s',
   } as const
 
   return (
     <div className="w-full max-w-[420px]">
       <div className="mb-8 text-center">
         <span
-          className="text-2xl font-bold tracking-[0.15em] uppercase"
-          style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
+          className="text-2xl font-semibold"
+          style={{ fontFamily: 'var(--font-outfit)', color: '#FFFFFF' }}
         >
-          Alias<span style={{ color: '#00F0FF' }}>Kit</span>
+          AliasKit
         </span>
-        <p className="mt-2 text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+        <p className="mt-2 text-sm" style={{ color: '#A1A1A1', fontFamily: 'var(--font-outfit)' }}>
           Create an account
         </p>
       </div>
 
-      <div className="glass-panel p-8">
+      <div className="panel p-8">
         <h1
           className="text-base font-semibold mb-6"
-          style={{ fontFamily: 'var(--font-outfit)', color: '#E2E8F0' }}
+          style={{ fontFamily: 'var(--font-outfit)', color: '#FFFFFF' }}
         >
           Get started
         </h1>
 
-        {/* Google OAuth */}
         <button
           type="button"
           onClick={handleGoogleSignIn}
           disabled={googleLoading || loading}
-          className="w-full py-2.5 text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-2.5 text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
           style={{
-            background: 'rgba(5, 9, 20, 0.8)',
-            border: '1px solid rgba(0, 240, 255, 0.2)',
-            borderRadius: 4,
-            color: '#E2E8F0',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            color: '#FFFFFF',
             fontFamily: 'var(--font-outfit)',
           }}
-          onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0, 240, 255, 0.5)')}
-          onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0, 240, 255, 0.2)')}
+          onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.18)')}
+          onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.10)')}
         >
           {!googleLoading && (
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,27 +121,26 @@ export default function RegisterPage() {
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 my-1">
-          <div className="flex-1 h-px" style={{ background: 'rgba(0, 240, 255, 0.1)' }} />
-          <span className="text-xs" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>or</span>
-          <div className="flex-1 h-px" style={{ background: 'rgba(0, 240, 255, 0.1)' }} />
+        <div className="flex items-center gap-3 my-4">
+          <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+          <span className="text-xs" style={{ color: '#525252', fontFamily: 'var(--font-outfit)' }}>or</span>
+          <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
         </div>
 
         {success ? (
           <div className="text-center py-4">
             <div className="text-4xl mb-4">✓</div>
-            <p className="text-sm mb-2" style={{ color: '#39FF14', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <p className="text-sm mb-2" style={{ color: '#22C55E', fontFamily: 'var(--font-jetbrains-mono)' }}>
               Account created.
             </p>
-            <p className="text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <p className="text-xs" style={{ color: '#A1A1A1', fontFamily: 'var(--font-jetbrains-mono)' }}>
               Check your email to confirm. Redirecting to login…
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+              <label className="text-xs font-medium" style={{ color: '#A1A1A1', fontFamily: 'var(--font-outfit)' }}>
                 Email
               </label>
               <input
@@ -150,15 +149,15 @@ export default function RegisterPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full px-4 py-2.5 text-sm outline-none"
+                className="w-full px-4 py-2.5 text-sm"
                 style={inputStyle}
-                onFocus={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.5)')}
-                onBlur={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.2)')}
+                onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.5)')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.10)')}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+              <label className="text-xs font-medium" style={{ color: '#A1A1A1', fontFamily: 'var(--font-outfit)' }}>
                 Password
               </label>
               <input
@@ -167,15 +166,15 @@ export default function RegisterPage() {
                 onChange={e => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                className="w-full px-4 py-2.5 text-sm outline-none"
+                className="w-full px-4 py-2.5 text-sm"
                 style={inputStyle}
-                onFocus={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.5)')}
-                onBlur={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.2)')}
+                onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.5)')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.10)')}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+              <label className="text-xs font-medium" style={{ color: '#A1A1A1', fontFamily: 'var(--font-outfit)' }}>
                 Confirm password
               </label>
               <input
@@ -184,16 +183,19 @@ export default function RegisterPage() {
                 onChange={e => setConfirm(e.target.value)}
                 required
                 autoComplete="new-password"
-                className="w-full px-4 py-2.5 text-sm outline-none"
+                className="w-full px-4 py-2.5 text-sm"
                 style={inputStyle}
-                onFocus={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.5)')}
-                onBlur={e => (e.target.style.borderColor = 'rgba(0, 240, 255, 0.2)')}
+                onFocus={e => (e.target.style.borderColor = 'rgba(99,102,241,0.5)')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.10)')}
               />
             </div>
 
             {error && (
-              <div className="glass-panel-alert px-4 py-3">
-                <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>
+              <div
+                className="px-4 py-3 rounded-md"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+              >
+                <p className="text-xs" style={{ color: '#EF4444', fontFamily: 'var(--font-outfit)' }}>
                   {error}
                 </p>
               </div>
@@ -202,16 +204,22 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-cyber w-full py-3 text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-3 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
         )}
 
-        <p className="mt-6 text-center text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+        <p className="mt-6 text-center text-sm" style={{ color: '#525252', fontFamily: 'var(--font-outfit)' }}>
           Already have an account?{' '}
-          <Link href="/login" style={{ color: '#00F0FF' }}>
+          <Link
+            href="/login"
+            className="transition-colors"
+            style={{ color: '#A1A1A1' }}
+            onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#FFFFFF')}
+            onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#A1A1A1')}
+          >
             Sign in
           </Link>
         </p>
