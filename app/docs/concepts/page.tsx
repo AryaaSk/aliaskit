@@ -103,7 +103,7 @@ export default function ConceptsPage() {
       <BulletList
         items={[
           <><strong>Name</strong> — a realistic human name (auto-generated or provided)</>,
-          <><strong>Email address</strong> — a dedicated inbox (e.g., jordan.riley@aliaskit.to)</>,
+          <><strong>Email address</strong> — a dedicated inbox (e.g., jordan.riley@aliaskit.com)</>,
           <><strong>Phone number</strong> (optional) — a real phone number for SMS verification</>,
         ]}
       />
@@ -123,7 +123,7 @@ export default function ConceptsPage() {
       <Heading3>How email works</Heading3>
       <BulletList
         items={[
-          <>Email arrives at your identity&apos;s address (e.g., jordan.riley@aliaskit.to)</>,
+          <>Email arrives at your identity&apos;s address (e.g., jordan.riley@aliaskit.com)</>,
           <>Cloudflare Email Workers catch the incoming mail at the MX record level</>,
           <>The worker forwards it to AliasKit&apos;s API, which parses and stores the message in the database</>,
           <>Your app polls the email list endpoint to retrieve messages and extract verification codes</>,

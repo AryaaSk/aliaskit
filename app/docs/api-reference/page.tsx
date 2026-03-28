@@ -175,8 +175,8 @@ export default function ApiReferencePage() {
       <p className="text-xs uppercase tracking-wider mb-2" style={{ color: '#64748B', fontFamily: 'var(--font-syncopate), sans-serif' }}>Request body</p>
       <Table>
         <ParamRow name="name"            type="string"  description="Full name (auto-generated if omitted)" />
-        <ParamRow name="email_username"  type="string"  description="Email prefix, e.g. 'jordan' → jordan@aliaskit.to" />
-        <ParamRow name="email_domain"    type="string"  description="Email domain (defaults to aliaskit.to)" />
+        <ParamRow name="email_username"  type="string"  description="Email prefix, e.g. 'jordan' → jordan@aliaskit.com" />
+        <ParamRow name="email_domain"    type="string"  description="Email domain (defaults to aliaskit.com)" />
         <ParamRow name="provision_phone" type="boolean" description="Purchase and assign a phone number" />
         <ParamRow name="phone_country"   type="string"  description="ISO 3166-1 alpha-2 country code for phone (default: US)" />
         <ParamRow name="metadata"        type="object"  description="Arbitrary key-value pairs (agent framework, purpose, etc.)" />
@@ -195,8 +195,8 @@ export default function ApiReferencePage() {
   "id": "ident_abc123",
   "name": "Jordan Riley",
   "date_of_birth": "1994-07-12",
-  "email": "jordan.riley@aliaskit.to",
-  "email_domain": "aliaskit.to",
+  "email": "jordan.riley@aliaskit.com",
+  "email_domain": "aliaskit.com",
   "phone_number": "+12025551234",
   "phone_provider": "plivo",
   "status": "active",
@@ -245,7 +245,7 @@ export default function ApiReferencePage() {
       "identity_id": "ident_abc123",
       "direction": "inbound",
       "from": "noreply@github.com",
-      "to": "jordan.riley@aliaskit.to",
+      "to": "jordan.riley@aliaskit.com",
       "subject": "Verify your email",
       "body_text": "Your verification code is 482910",
       "body_html": null,

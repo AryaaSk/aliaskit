@@ -131,7 +131,7 @@ const identity = await ak.identities.create({
 })
 
 console.log(identity.name)          // "Jordan Riley"
-console.log(identity.email)         // "jordan.riley@aliaskit.to"
+console.log(identity.email)         // "jordan.riley@aliaskit.com"
 console.log(identity.phone_number)  // "+12025551234"
       `}</CodeBlock>
 
