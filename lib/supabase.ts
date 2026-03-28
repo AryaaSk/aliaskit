@@ -9,8 +9,6 @@ export function getSupabaseClient(): SupabaseClient {
   if (!url || !key) {
     throw new Error('Missing Supabase environment variables')
   }
-  _client = createClient(url, key, {
-    auth: { flowType: 'pkce' },
-  })
+  _client = createClient(url, key)
   return _client
 }

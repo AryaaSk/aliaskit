@@ -12,28 +12,18 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const supabase = getSupabaseClient()
 
-    async function handleCallback() {
-      const params = new URLSearchParams(window.location.search)
-      const code = params.get('code')
-
-      if (code) {
-        // Explicitly exchange the PKCE code for a session
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-        if (error) {
-          setErrorMsg(error.message)
-          setStatus('error')
-          return
-        }
-        if (data.session) {
-          document.cookie = `ak-access-token=${data.session.access_token}; path=/; max-age=3600; SameSite=Lax`
-          document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
-          router.replace('/dashboard')
-          return
-        }
+    // onAuthStateChange auto-detects the #access_token hash fragment
+    // from implicit OAuth flow and establishes the session.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
+        document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
+        router.replace('/dashboard')
       }
+    })
 
-      // No code in URL — check for an existing session (e.g. email confirmation links)
-      const { data: { session }, error } = await supabase.auth.getSession()
+    // Also check for an existing session (e.g. page refresh, email confirm links)
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         setErrorMsg(error.message)
         setStatus('error')
@@ -43,15 +33,18 @@ export default function AuthCallbackPage() {
         document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
         document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
         router.replace('/dashboard')
-        return
       }
+    })
 
-      // No code and no session — something went wrong
-      setErrorMsg('Verification link expired or invalid.')
+    const timeout = setTimeout(() => {
+      setErrorMsg('Sign-in timed out — please try again.')
       setStatus('error')
-    }
+    }, 8000)
 
-    handleCallback()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [router])
 
   if (status === 'error') {
