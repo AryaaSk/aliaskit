@@ -48,15 +48,6 @@ export default function Navigation() {
         {/* Nav links */}
         <nav className="flex items-center gap-6">
           <a
-            href="/dashboard"
-            className="text-sm"
-            style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#E2E8F0')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
-          >
-            Dashboard
-          </a>
-          <a
             href="/docs"
             className="text-sm"
             style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
@@ -66,11 +57,29 @@ export default function Navigation() {
             Docs
           </a>
           <a
+            href="#pricing"
+            className="text-sm"
+            style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#E2E8F0')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Pricing
+          </a>
+          <a
+            href="/dashboard"
+            className="text-sm"
+            style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#E2E8F0')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Dashboard
+          </a>
+          <a
             href="/dashboard"
             className="btn-cyber flex items-center justify-center text-xs"
-            style={{ width: 120, height: 36 }}
+            style={{ width: 140, height: 36 }}
           >
-            Get Started
+            Get Started Free
           </a>
         </nav>
       </div>
