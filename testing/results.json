@@ -1,5 +1,5 @@
 {
-  "runAt": "2026-03-28T20:59:10.668Z",
+  "runAt": "2026-03-28T22:51:53.608Z",
   "summary": {
     "pass": 9,
     "fail": 0,
@@ -11,7 +11,7 @@
     {
       "page": "/",
       "status": "pass",
-      "notes": "HTTP 200 | title=\"AliasKit — Identity Layer for Autonomous Agents\" | h1=\"The identityprimitivefor autonomous agents.\""
+      "notes": "HTTP 200 | title=\"AliasKit — Identity Layer for Autonomous Agents\" | h1=\"Give your agentsa real identity.\""
     },
     {
       "page": "/login",
