@@ -9,7 +9,6 @@ export default function SettingsPage() {
   const [createdAt, setCreatedAt] = useState<string | null>(null)
 
   // Password change
-  const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [pwLoading, setPwLoading] = useState(false)
@@ -46,7 +45,6 @@ export default function SettingsPage() {
       setPwError(error.message)
     } else {
       setPwSuccess(true)
-      setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
     }

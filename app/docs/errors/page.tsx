@@ -42,7 +42,7 @@ function P({ children }: { children: React.ReactNode }) {
   )
 }
 
-function CodeBlock({ children, language = 'json' }: { children: string; language?: string }) {
+function CodeBlock({ children }: { children: string; language?: string }) {
   return (
     <pre
       className="rounded-lg p-4 text-sm overflow-x-auto mb-6"

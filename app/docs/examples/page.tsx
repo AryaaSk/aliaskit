@@ -23,16 +23,6 @@ function Heading2({ id, children }: { id?: string; children: React.ReactNode }) 
   )
 }
 
-function Heading3({ children }: { children: React.ReactNode }) {
-  return (
-    <h3
-      className="text-base font-semibold mt-6 mb-2"
-      style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
-    >
-      {children}
-    </h3>
-  )
-}
 
 function P({ children }: { children: React.ReactNode }) {
   return (
@@ -42,7 +32,7 @@ function P({ children }: { children: React.ReactNode }) {
   )
 }
 
-function CodeBlock({ children, language = 'typescript' }: { children: string; language?: string }) {
+function CodeBlock({ children }: { children: string; language?: string }) {
   return (
     <pre
       className="rounded-lg p-4 text-sm overflow-x-auto mb-6"

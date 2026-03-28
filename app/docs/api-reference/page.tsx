@@ -85,7 +85,7 @@ function Route({ method, path, description }: { method: 'GET' | 'POST' | 'PATCH'
   )
 }
 
-function CodeBlock({ children, language = 'json' }: { children: string; language?: string }) {
+function CodeBlock({ children }: { children: string; language?: string }) {
   return (
     <pre
       className="rounded-lg p-4 text-sm overflow-x-auto mb-6"

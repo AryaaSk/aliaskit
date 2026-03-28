@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getSupabaseServerClient } from '@/lib/supabase-server'
 
 type Stats = {
   totalIdentities: number
