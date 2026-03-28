@@ -21,9 +21,25 @@ export async function POST() {
   const email = `${generateEmailUsername(name)}@${DEFAULT_DOMAIN}`
 
   const supabase = getSupabaseServerClient()
+
+  const { data: keyRow } = await supabase
+    .from('api_keys')
+    .select('id')
+    .is('revoked_at', null)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single()
+
+  if (!keyRow) {
+    return Response.json(
+      { error: 'Create an API key before provisioning identities' },
+      { status: 400 }
+    )
+  }
+
   const { data, error } = await supabase
     .from('identities')
-    .insert({ name, date_of_birth, email, email_domain: DEFAULT_DOMAIN, phone_number: null, phone_provider: null, status: 'active', metadata: {} })
+    .insert({ name, date_of_birth, email, email_domain: DEFAULT_DOMAIN, phone_number: null, phone_provider: null, status: 'active', metadata: {}, api_key_id: keyRow.id })
     .select()
     .single()
 
