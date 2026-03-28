@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: false })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
-  return Response.json({ data })
+  return Response.json({ data, total: data.length })
 }
 
 export async function POST(request: Request) {
