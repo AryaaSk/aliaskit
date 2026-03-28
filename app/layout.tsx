@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { Syncopate, Outfit, JetBrains_Mono } from 'next/font/google'
+import OAuthRedirectHandler from '@/components/OAuthRedirectHandler'
 import './globals.css'
 
 const syncopate = Syncopate({
@@ -37,7 +39,12 @@ export default function RootLayout({
       lang="en"
       className={`${syncopate.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="antialiased min-h-screen flex flex-col">{children}</body>
+      <body className="antialiased min-h-screen flex flex-col">
+        <Suspense>
+          <OAuthRedirectHandler />
+        </Suspense>
+        {children}
+      </body>
     </html>
   )
 }

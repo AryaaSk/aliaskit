@@ -19,15 +19,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const supabase = getSupabaseClient()
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        // Clear cookie and redirect
+
+    // onAuthStateChange fires immediately with INITIAL_SESSION so we get the
+    // current auth state reliably, even right after an OAuth redirect where
+    // getSession() could race against the PKCE code exchange completing.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
         document.cookie = 'ak-session=; path=/; max-age=0'
         router.push('/login')
         return
       }
-      setUserEmail(data.session.user.email ?? null)
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (session) {
+          setUserEmail(session.user.email ?? null)
+        } else if (event === 'INITIAL_SESSION') {
+          // No session on first check — redirect to login
+          document.cookie = 'ak-session=; path=/; max-age=0'
+          router.push('/login')
+        }
+      }
     })
+
+    return () => subscription.unsubscribe()
   }, [router])
 
   async function handleLogout() {
