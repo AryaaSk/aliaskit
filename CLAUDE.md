@@ -11,9 +11,11 @@
 
 ### Merging to main
 
-- Only merge to `main` when code is **production-ready** — tested, compiles, no regressions
-- **Always ask the board (human) for approval before merging to main** — post a comment on the issue with a summary of changes and request merge approval
+- **Do NOT merge to main yourself** — the Release Engineer handles all merges
+- When your feature branch is ready, push it to remote and comment on the issue: "Ready for merge: branch `feat/xyz`, build passes"
+- The Release Engineer will review, request board approval, and merge
 - Never force-push to `main`
+- Never force-push anywhere
 
 ### Deployment
 

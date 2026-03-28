@@ -1,94 +1,107 @@
 import type { NextRequest } from 'next/server'
-import { getSupabaseServerClient } from '@/lib/supabase-server'
 import { Webhook } from 'svix'
+import { getSupabaseServerClient } from '@/lib/supabase-server'
 
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET ?? ''
 
+interface ResendInboundAttachment {
+  filename?: string
+  content?: string
+  content_type?: string
+}
+
+interface ResendInboundData {
+  email_id?: string
+  from: string
+  to: string[]
+  subject?: string
+  text?: string | null
+  html?: string | null
+  headers?: Array<{ name: string; value: string }>
+  attachments?: ResendInboundAttachment[]
+}
+
+interface ResendWebhookPayload {
+  type: string
+  created_at: string
+  data: ResendInboundData
+}
+
 export async function POST(request: NextRequest) {
-  // --- Verify Resend webhook signature via Svix ---
+  if (!RESEND_WEBHOOK_SECRET) {
+    console.error('RESEND_WEBHOOK_SECRET is not configured')
+    return Response.json({ error: 'Inbound email not configured' }, { status: 500 })
+  }
+
+  // Read raw body for signature verification
+  const rawBody = await request.text()
+
+  // Verify Resend webhook signature (svix)
   const svixId = request.headers.get('svix-id') ?? ''
   const svixTimestamp = request.headers.get('svix-timestamp') ?? ''
   const svixSignature = request.headers.get('svix-signature') ?? ''
 
-  if (!RESEND_WEBHOOK_SECRET) {
-    console.error('RESEND_WEBHOOK_SECRET is not set')
-    return Response.json({ error: 'Webhook not configured' }, { status: 500 })
-  }
-
-  let rawBody: string
+  const wh = new Webhook(RESEND_WEBHOOK_SECRET)
+  let payload: ResendWebhookPayload
   try {
-    rawBody = await request.text()
-  } catch {
-    return Response.json({ error: 'Failed to read body' }, { status: 400 })
-  }
-
-  let payload: Record<string, unknown>
-  try {
-    const wh = new Webhook(RESEND_WEBHOOK_SECRET)
     payload = wh.verify(rawBody, {
       'svix-id': svixId,
       'svix-timestamp': svixTimestamp,
       'svix-signature': svixSignature,
-    }) as Record<string, unknown>
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err)
+    }) as ResendWebhookPayload
+  } catch {
     return Response.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
-  // --- Parse Resend inbound email payload ---
-  // Resend wraps the email data inside a `data` envelope
-  const eventType = payload.type as string | undefined
-  if (eventType !== 'email.received') {
-    // Acknowledge non-inbound events gracefully
+  // Only handle inbound email events
+  if (payload.type !== 'email.received') {
     return Response.json({ received: true, stored: false })
   }
 
-  const data = payload.data as Record<string, unknown> | undefined
-  if (!data) {
-    return Response.json({ error: 'Missing data in payload' }, { status: 400 })
-  }
+  const { from, to, subject, text, html, headers, attachments } = payload.data
 
-  // Resend sends `to` as an array of strings
-  const toArr = data.to as string[] | undefined
-  const to = toArr?.[0]?.toLowerCase()
-  if (!to) {
+  // Resend delivers to as an array; match against all recipient addresses
+  const toAddresses = (to ?? []).map((addr) => addr.toLowerCase())
+  if (toAddresses.length === 0) {
     return Response.json({ error: 'Missing "to" field' }, { status: 400 })
   }
 
-  const from = (data.from as string) ?? ''
-  const subject = (data.subject as string) ?? ''
-  const bodyText = (data.text as string | null) ?? null
-  const bodyHtml = (data.html as string | null) ?? null
-  const headers = (data.headers as Record<string, unknown>) ?? {}
-
   const supabase = getSupabaseServerClient()
 
-  // Look up identity by email address
+  // Look up identity by any matching email address
   const { data: identity, error: idErr } = await supabase
     .from('identities')
     .select('id')
-    .eq('email', to)
+    .in('email', toAddresses)
     .neq('status', 'deleted')
+    .limit(1)
     .single()
 
   if (idErr || !identity) {
-    // No identity found — acknowledge but don't error (could be spam)
+    // No identity for this address — ack so Resend doesn't retry
     return Response.json({ received: true, stored: false })
+  }
+
+  // Normalise headers array → object
+  const headersObj: Record<string, string> = {}
+  for (const h of headers ?? []) {
+    headersObj[h.name] = h.value
   }
 
   const { error: insertErr } = await supabase.from('email_messages').insert({
     identity_id: identity.id,
     direction: 'inbound',
-    from,
-    to,
-    subject,
-    body_text: bodyText,
-    body_html: bodyHtml,
-    headers,
-    attachments: [],
+    from: from ?? '',
+    to: toAddresses[0],
+    subject: subject ?? '',
+    body_text: text ?? null,
+    body_html: html ?? null,
+    headers: headersObj,
+    attachments: attachments ?? [],
   })
 
   if (insertErr) {
+    console.error('Failed to store inbound email:', insertErr)
     return Response.json({ error: insertErr.message }, { status: 500 })
   }
 

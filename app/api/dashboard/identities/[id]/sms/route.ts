@@ -109,9 +109,8 @@ export async function POST(request: Request, { params }: Ctx) {
 
   const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-  let twilioMessage
   try {
-    twilioMessage = await client.messages.create({
+    await client.messages.create({
       from: identity.phone_number,
       to,
       body: message,
@@ -129,7 +128,6 @@ export async function POST(request: Request, { params }: Ctx) {
       from: identity.phone_number,
       to,
       body: message,
-      twilio_sid: twilioMessage.sid,
     })
     .select()
     .single()

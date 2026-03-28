@@ -16,7 +16,7 @@ Long-term: portable, verifiable agent credentials (Web3). Short-term: a dead-sim
 
 ### What's In
 
-- Email inbox provisioning (receive + send) via Cloudflare Email Workers
+- Email inbox provisioning (receive + send) via Resend (inbound webhooks + outbound API)
 - Phone number provisioning (receive SMS) via Plivo
 - REST API for identity CRUD
 - Dashboard UI for managing identities
@@ -283,7 +283,7 @@ DELETE /v1/webhooks/:id              Delete webhook
               +--------+  +---+   +--------+
               |           |                |
      +--------v---+  +----v------+  +------v------+
-     |  Supabase  |  | Cloudflare|  |   Plivo     |
+     |  Supabase  |  | Resend|  |   Plivo     |
      |  (Postgres)|  | Email     |  |   (Phone)   |
      |            |  | Workers   |  |             |
      +------------+  +-----------+  +-------------+
@@ -292,7 +292,7 @@ DELETE /v1/webhooks/:id              Delete webhook
 ### Email Flow (Inbound)
 
 1. Email arrives at `*@aliaskit.to`
-2. Cloudflare Email Worker receives it
+2. Resend inbound webhook receives it
 3. Worker parses headers, body, attachments
 4. Worker POSTs to `/api/internal/email/inbound` with a shared secret
 5. API route stores the message in Supabase `email_messages` table
@@ -302,7 +302,7 @@ DELETE /v1/webhooks/:id              Delete webhook
 
 1. Agent calls `POST /v1/identities/:id/emails`
 2. API route validates the identity owns the from address
-3. API route sends via Cloudflare MailChannels or Resend (for deliverability)
+3. API route sends via Resend API (for deliverability)
 4. Store sent message in Supabase
 
 ### SMS Flow (Inbound)
@@ -324,7 +324,7 @@ DELETE /v1/webhooks/:id              Delete webhook
 
 1. Agent calls `POST /v1/identities`
 2. API route generates or uses provided username
-3. Registers the address in Supabase (Cloudflare worker routes all `*@aliaskit.to`)
+3. Registers the address in Supabase (Resend worker routes all `*@aliaskit.to`)
 4. No external provisioning needed — the catch-all worker handles routing
 
 ---
@@ -391,7 +391,7 @@ SDK is a thin wrapper over fetch — no dependencies, works in Node, Deno, Bun, 
 |---|---|---|
 | App hosting | Vercel | Next.js default, free tier sufficient |
 | Database | Supabase (Postgres) | Already configured |
-| Email receive | Cloudflare Email Workers | Requires `aliaskit.to` DNS on Cloudflare |
+| Email receive | Resend (inbound webhooks + outbound API) | Requires `aliaskit.to` DNS on Resend |
 | Email send | MailChannels via CF Worker or Resend | Need SPF/DKIM/DMARC setup |
 | Phone numbers | Plivo | $0.50/number/month, free inbound SMS |
 | File storage | Supabase Storage | Email attachments |
@@ -400,7 +400,7 @@ SDK is a thin wrapper over fetch — no dependencies, works in Node, Deno, Bun, 
 ### Required DNS (aliaskit.to)
 
 ```
-MX    aliaskit.to  →  Cloudflare Email Routing
+MX    aliaskit.to  →  Resend inbound email
 TXT   aliaskit.to  →  SPF record for outbound
 TXT   _dmarc       →  DMARC policy
 CNAME sel1._domainkey  →  DKIM key
@@ -418,7 +418,7 @@ SUPABASE_SERVICE_ROLE_KEY=...        # for server-side DB writes
 PLIVO_AUTH_ID=...
 PLIVO_AUTH_TOKEN=...
 PLIVO_SMS_WEBHOOK_SECRET=...         # HMAC for inbound SMS verification
-CLOUDFLARE_EMAIL_WEBHOOK_SECRET=...  # shared secret for inbound email
+RESEND_WEBHOOK_SECRET=...            # Resend webhook signing secret for inbound email
 RESEND_API_KEY=...                   # for outbound email (if using Resend)
 ```
 
@@ -435,7 +435,7 @@ RESEND_API_KEY=...                   # for outbound email (if using Resend)
 
 ### Phase 2 — Email
 
-- [ ] Cloudflare Email Worker (catch-all → POST to API)
+- [ ] Resend inbound webhook (catch-all → POST to API)
 - [ ] Internal inbound email endpoint
 - [ ] Email list/read endpoints
 - [ ] Outbound email (via Resend or MailChannels)
