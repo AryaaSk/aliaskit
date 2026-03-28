@@ -4,6 +4,7 @@ import { getSupabaseServerClient } from './supabase-server'
 
 export interface AuthContext {
   apiKeyId: string
+  userId: string
   scopes: string[]
 }
 
@@ -28,7 +29,7 @@ export async function requireAuth(
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('api_keys')
-    .select('id, scopes, revoked_at')
+    .select('id, user_id, scopes, revoked_at')
     .eq('key_hash', keyHash)
     .single()
 
@@ -47,7 +48,7 @@ export async function requireAuth(
     .eq('id', data.id)
     .then(() => {})
 
-  return { apiKeyId: data.id as string, scopes: data.scopes as string[] }
+  return { apiKeyId: data.id as string, userId: data.user_id as string, scopes: data.scopes as string[] }
 }
 
 export function isAuthContext(v: AuthContext | Response): v is AuthContext {
@@ -59,25 +60,30 @@ export interface DashboardAuthContext {
 }
 
 /**
- * Validates dashboard session from cookies.
+ * Validates dashboard session using the Supabase access token stored in cookies.
  * Returns a DashboardAuthContext on success, or a Response on failure (401).
  */
 export async function requireDashboardAuth(
   request: Request
 ): Promise<DashboardAuthContext | Response> {
   const cookieHeader = request.headers.get('cookie') ?? ''
-  const hasCookie = cookieHeader.includes('ak-session=1')
 
-  if (!hasCookie) {
-    return Response.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+  // Extract the Supabase access token written by the login/callback pages
+  const match = cookieHeader.match(/(?:^|;\s*)ak-access-token=([^;]+)/)
+  const accessToken = match?.[1]
+
+  if (!accessToken) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // TODO: In production, validate the session with Supabase to ensure it's still valid
-  // For now, trusting the cookie presence as a basic check
-  return { userId: 'authenticated' }
+  const supabase = getSupabaseServerClient()
+  const { data: { user }, error } = await supabase.auth.getUser(accessToken)
+
+  if (error || !user) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  return { userId: user.id }
 }
 
 export function isDashboardAuthContext(v: DashboardAuthContext | Response): v is DashboardAuthContext {

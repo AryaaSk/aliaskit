@@ -17,12 +17,12 @@ import type { AuthContext } from '../lib/auth'
 
 describe('isAuthContext', () => {
   it('returns true for a valid AuthContext object', () => {
-    const ctx: AuthContext = { apiKeyId: 'key-123', scopes: ['read', 'write'] }
+    const ctx: AuthContext = { apiKeyId: 'key-123', userId: 'user-123', scopes: ['read', 'write'] }
     expect(isAuthContext(ctx)).toBe(true)
   })
 
   it('returns true for an AuthContext with empty scopes', () => {
-    const ctx: AuthContext = { apiKeyId: 'key-abc', scopes: [] }
+    const ctx: AuthContext = { apiKeyId: 'key-abc', userId: 'user-abc', scopes: [] }
     expect(isAuthContext(ctx)).toBe(true)
   })
 

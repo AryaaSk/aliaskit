@@ -33,7 +33,7 @@ export default function HeroSection() {
             textTransform: 'uppercase',
           }}
         >
-          <span style={{ color: '#E2E8F0' }}>A complete</span>
+          <span style={{ color: '#E2E8F0' }}>The identity</span>
           <br />
           <span
             style={{
@@ -43,34 +43,50 @@ export default function HeroSection() {
               backgroundClip: 'text',
             }}
           >
-            human identity
+            primitive
           </span>
           <br />
-          <span style={{ color: '#E2E8F0' }}>for your agent.</span>
+          <span style={{ color: '#E2E8F0' }}>for autonomous agents.</span>
         </h1>
+
+        {/* Subheading */}
+        <p
+          className="text-sm tracking-wide"
+          style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+        >
+          Email, phone, verified identity — without the setup friction.
+        </p>
 
         {/* Body */}
         <p
           className="text-base leading-[1.8] max-w-lg mx-auto lg:mx-0"
           style={{ color: '#8899aa', fontFamily: 'var(--font-outfit), sans-serif', fontSize: 16 }}
         >
-          AliasKit provisions a full real-world identity so your AI agent can
-          act as an autonomous entity on the web — open accounts, make payments,
-          receive messages, and more. No humans in the loop.
+          One API call creates a complete digital identity. Your agents can sign up
+          for services, verify accounts, and operate independently on the internet —
+          with zero KYC forms or manual setup.
         </p>
 
         {/* CTA */}
-        <div className="flex items-center gap-4 justify-center lg:justify-start">
-          <a
-            href="/dashboard"
-            className="btn-cyber flex items-center justify-center text-sm"
-            style={{ width: 200, height: 48 }}
+        <div className="flex flex-col items-center lg:items-start gap-2">
+          <div className="flex items-center gap-4 justify-center lg:justify-start">
+            <a
+              href="/dashboard"
+              className="btn-cyber flex items-center justify-center text-sm"
+              style={{ width: 200, height: 48 }}
+            >
+              Get Started Free
+            </a>
+            <a href="/docs" className="hero-learn-more">
+              Read Docs →
+            </a>
+          </div>
+          <span
+            className="text-xs"
+            style={{ color: '#3d4f63', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
           >
-            Get Started
-          </a>
-          <a href="/docs" className="hero-learn-more">
-            Read Docs →
-          </a>
+            No credit card required. 10 free identities/month.
+          </span>
         </div>
       </div>
 

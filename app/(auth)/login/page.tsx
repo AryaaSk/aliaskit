@@ -37,7 +37,7 @@ function LoginForm() {
     setLoading(true)
 
     const supabase = getSupabaseClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (authError) {
       if (authError.message.toLowerCase().includes('email not confirmed')) {
@@ -49,7 +49,10 @@ function LoginForm() {
       return
     }
 
-    // Set a session flag cookie readable by proxy
+    // Store the access token in a cookie so server-side routes can validate the session
+    if (data.session) {
+      document.cookie = `ak-access-token=${data.session.access_token}; path=/; max-age=3600; SameSite=Lax`
+    }
     document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
     router.push(next)
   }

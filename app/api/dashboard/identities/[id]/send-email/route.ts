@@ -31,6 +31,7 @@ export async function POST(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id, email')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 

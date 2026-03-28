@@ -23,6 +23,7 @@ export async function GET(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id, phone_number')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 
@@ -72,6 +73,7 @@ export async function POST(request: Request, { params }: Ctx) {
     .from('identities')
     .select('id, phone_number')
     .eq('id', id)
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .single()
 

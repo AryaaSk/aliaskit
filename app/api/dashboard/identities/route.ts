@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   const { data, error } = await supabase
     .from('identities')
     .select('*')
+    .eq('user_id', auth.userId)
     .neq('status', 'deleted')
     .order('created_at', { ascending: false })
 
@@ -29,9 +30,11 @@ export async function POST(request: Request) {
 
   const supabase = getSupabaseServerClient()
 
+  // Get the first active API key belonging to this user
   const { data: keyRow } = await supabase
     .from('api_keys')
     .select('id')
+    .eq('user_id', auth.userId)
     .is('revoked_at', null)
     .order('created_at', { ascending: true })
     .limit(1)
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
     const key_hash = createHash('sha256').update(raw).digest('hex')
     const { data: newKey, error: keyError } = await supabase
       .from('api_keys')
-      .insert({ key_hash, key_prefix, label: 'Default', scopes: ['identities:read', 'identities:write', 'messages:read'], rate_limit: 60 })
+      .insert({ key_hash, key_prefix, label: 'Default', scopes: ['identities:read', 'identities:write', 'messages:read'], rate_limit: 60, user_id: auth.userId })
       .select('id')
       .single()
     if (keyError || !newKey) {
@@ -58,7 +61,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from('identities')
-    .insert({ name, date_of_birth, email, email_domain: DEFAULT_DOMAIN, phone_number: null, phone_provider: null, status: 'active', metadata: {}, api_key_id: apiKeyId })
+    .insert({ name, date_of_birth, email, email_domain: DEFAULT_DOMAIN, phone_number: null, phone_provider: null, status: 'active', metadata: {}, api_key_id: apiKeyId, user_id: auth.userId })
     .select()
     .single()
 
