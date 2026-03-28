@@ -9,6 +9,7 @@ const NAV = [
   { href: '/dashboard', label: 'Overview', icon: 'grid_view' },
   { href: '/dashboard/identities', label: 'Identities', icon: 'fingerprint' },
   { href: '/dashboard/api-keys', label: 'API Keys', icon: 'key' },
+  { href: '/dashboard/settings', label: 'Settings', icon: 'settings' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
