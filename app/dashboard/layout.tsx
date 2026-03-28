@@ -20,9 +20,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     const supabase = getSupabaseClient()
 
-    // onAuthStateChange fires immediately with INITIAL_SESSION so we get the
-    // current auth state reliably, even right after an OAuth redirect where
-    // getSession() could race against the PKCE code exchange completing.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         document.cookie = 'ak-session=; path=/; max-age=0'
@@ -33,7 +30,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (session) {
           setUserEmail(session.user.email ?? null)
         } else if (event === 'INITIAL_SESSION') {
-          // No session on first check — redirect to login
           document.cookie = 'ak-session=; path=/; max-age=0'
           router.push('/login')
         }
@@ -50,24 +46,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push('/login')
   }
 
+  const initials = userEmail ? userEmail[0].toUpperCase() : '?'
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside
         className="w-[240px] flex-shrink-0 flex flex-col"
         style={{
-          background: 'rgba(8, 12, 26, 0.98)',
+          background: 'rgba(6, 10, 22, 0.99)',
           borderRight: '1px solid rgba(255, 255, 255, 0.06)',
         }}
       >
         {/* Logo */}
         <div
-          className="h-[64px] flex items-center px-6"
+          className="h-[64px] flex items-center px-5"
           style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}
         >
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div
+              className="w-7 h-7 flex items-center justify-center rounded-md flex-shrink-0"
+              style={{
+                background: 'rgba(0, 240, 255, 0.1)',
+                border: '1px solid rgba(0, 240, 255, 0.2)',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14, color: '#00F0FF' }}>
+                fingerprint
+              </span>
+            </div>
             <span
-              className="text-base font-bold tracking-[0.15em] uppercase"
+              className="text-sm font-bold tracking-[0.15em] uppercase"
               style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
             >
               Alias<span style={{ color: '#00F0FF' }}>Kit</span>
@@ -76,23 +85,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
+        <nav className="flex-1 px-3 py-5 flex flex-col gap-0.5">
           {NAV.map(({ href, label, icon }) => {
             const active = href === '/dashboard' ? pathname === href : pathname.startsWith(href)
             return (
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm"
+                className={`flex items-center gap-2.5 py-2 rounded-lg transition-all text-sm ${active ? 'nav-item-active' : 'nav-item-inactive'}`}
                 style={{
                   fontFamily: 'var(--font-outfit)',
                   color: active ? '#E2E8F0' : '#64748B',
-                  background: active ? 'rgba(255, 255, 255, 0.07)' : 'transparent',
+                  marginLeft: 0,
                 }}
               >
                 <span
                   className="material-symbols-outlined flex-shrink-0"
-                  style={{ fontSize: 18, color: active ? '#00F0FF' : '#64748B' }}
+                  style={{
+                    fontSize: 17,
+                    color: active ? '#00F0FF' : '#475569',
+                    filter: active ? 'drop-shadow(0 0 6px rgba(0,240,255,0.5))' : 'none',
+                  }}
                 >
                   {icon}
                 </span>
@@ -108,29 +121,42 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}
         >
           {userEmail && (
-            <p
-              className="text-xs mb-3 truncate"
-              style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
-            >
-              {userEmail}
-            </p>
+            <div className="flex items-center gap-2.5 mb-3">
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                style={{
+                  background: 'rgba(0, 240, 255, 0.12)',
+                  border: '1px solid rgba(0, 240, 255, 0.2)',
+                  color: '#00F0FF',
+                  fontFamily: 'var(--font-jetbrains-mono)',
+                }}
+              >
+                {initials}
+              </div>
+              <p
+                className="text-xs truncate flex-1 min-w-0"
+                style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
+              >
+                {userEmail}
+              </p>
+            </div>
           )}
           <button
             onClick={handleLogout}
-            className="w-full text-xs py-2 px-3 text-left transition-colors rounded-lg"
-            style={{
-              fontFamily: 'var(--font-outfit)',
-              color: '#475569',
-            }}
+            className="w-full text-xs py-1.5 px-3 text-left transition-all rounded-lg flex items-center gap-2"
+            style={{ fontFamily: 'var(--font-outfit)', color: '#475569' }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)'
+              const el = e.currentTarget
+              el.style.color = '#94a3b8'
+              el.style.background = 'rgba(255,255,255,0.04)'
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#475569'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+              const el = e.currentTarget
+              el.style.color = '#475569'
+              el.style.background = 'transparent'
             }}
           >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>logout</span>
             Sign out
           </button>
         </div>

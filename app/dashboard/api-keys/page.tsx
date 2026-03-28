@@ -15,6 +15,38 @@ type ApiKey = {
 
 const ALL_SCOPES = ['identities:read', 'identities:write', 'messages:read']
 
+function TableSkeleton() {
+  return (
+    <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
+      <thead>
+        <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+          {['Label', 'Prefix', 'Scopes', 'Last Used', 'Status', ''].map((h, i) => (
+            <th
+              key={i}
+              className="px-5 py-3 text-left text-[10px] font-medium uppercase tracking-wider"
+              style={{ color: '#334155', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
+            >
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {[...Array(2)].map((_, i) => (
+          <tr key={i} className="border-b" style={{ borderColor: 'rgba(255,255,255,0.03)' }}>
+            <td className="px-5 py-3.5"><div className="skeleton h-3.5 w-24" /></td>
+            <td className="px-5 py-3.5"><div className="skeleton h-3 w-20" /></td>
+            <td className="px-5 py-3.5"><div className="flex gap-1"><div className="skeleton h-5 w-24 rounded-full" /><div className="skeleton h-5 w-20 rounded-full" /></div></td>
+            <td className="px-5 py-3.5"><div className="skeleton h-3 w-16" /></td>
+            <td className="px-5 py-3.5"><div className="skeleton h-4 w-12" /></td>
+            <td className="px-5 py-3.5" />
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export default function ApiKeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,9 +83,7 @@ export default function ApiKeysPage() {
     }
 
     void loadInitialKeys()
-    return () => {
-      active = false
-    }
+    return () => { active = false }
   }, [])
 
   async function handleCreate(e: FormEvent) {
@@ -90,39 +120,48 @@ export default function ApiKeysPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const activeCount = keys.filter(k => !k.revoked_at).length
+
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-5xl">
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1
-            className="text-xl font-bold tracking-widest uppercase mb-1"
+            className="text-lg font-bold tracking-widest uppercase mb-1 page-title"
             style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
           >
             API Keys
           </h1>
-          <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
-            {loading ? '' : `${keys.filter(k => !k.revoked_at).length} active`}
+          <p className="text-xs mt-3" style={{ color: '#334155', fontFamily: 'var(--font-outfit)' }}>
+            {loading ? '\u00a0' : `${activeCount} active`}
           </p>
         </div>
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="btn-cyber px-5 py-2.5 text-xs">
-            + NEW KEY
+          <button
+            onClick={() => setShowForm(true)}
+            className="btn-cyber px-5 py-2.5 text-xs flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span>
+            New Key
           </button>
         )}
       </div>
 
       {/* New key reveal */}
       {newKey && (
-        <div className="glass-panel p-5 mb-6" style={{ borderColor: 'rgba(57, 255, 20, 0.3)' }}>
-          <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: '#39FF14', fontFamily: 'var(--font-outfit)' }}>
-            Key created — copy now, it won&apos;t be shown again
-          </p>
+        <div className="glass-panel p-5 mb-6" style={{ borderColor: 'rgba(57, 255, 20, 0.25)', boxShadow: '0 0 20px rgba(57,255,20,0.04)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined" style={{ fontSize: 14, color: '#39FF14' }}>check_circle</span>
+            <p className="text-xs font-medium uppercase tracking-wider" style={{ color: '#39FF14', fontFamily: 'var(--font-outfit)' }}>
+              Key created — copy now, it won&apos;t be shown again
+            </p>
+          </div>
           <div className="flex items-center gap-3">
             <code
               className="flex-1 text-xs px-4 py-2.5 rounded copy-field truncate"
               style={{
                 background: 'rgba(5, 9, 20, 0.8)',
-                border: '1px solid rgba(57, 255, 20, 0.2)',
+                border: '1px solid rgba(57, 255, 20, 0.15)',
                 color: '#39FF14',
                 fontFamily: 'var(--font-jetbrains-mono)',
               }}
@@ -131,23 +170,26 @@ export default function ApiKeysPage() {
             </code>
             <button
               onClick={copyKey}
-              className="text-xs px-4 py-2.5 transition-all"
+              className="text-xs px-4 py-2.5 transition-all flex items-center gap-1.5"
               style={{
-                background: 'rgba(57, 255, 20, 0.1)',
-                border: '1px solid rgba(57, 255, 20, 0.3)',
+                background: copied ? 'rgba(57, 255, 20, 0.15)' : 'rgba(57, 255, 20, 0.08)',
+                border: '1px solid rgba(57, 255, 20, 0.25)',
                 borderRadius: 4,
                 color: '#39FF14',
                 fontFamily: 'var(--font-jetbrains-mono)',
               }}
             >
-              {copied ? 'COPIED ✓' : 'COPY'}
+              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>{copied ? 'check' : 'content_copy'}</span>
+              {copied ? 'Copied' : 'Copy'}
             </button>
             <button
               onClick={() => setNewKey(null)}
-              className="text-xs px-3 py-2.5"
-              style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
+              className="text-xs px-2.5 py-2.5 transition-colors"
+              style={{ color: '#334155', fontFamily: 'var(--font-jetbrains-mono)' }}
+              onMouseEnter={e => ((e.currentTarget).style.color = '#64748B')}
+              onMouseLeave={e => ((e.currentTarget).style.color = '#334155')}
             >
-              ✕
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
             </button>
           </div>
         </div>
@@ -155,16 +197,26 @@ export default function ApiKeysPage() {
 
       {/* Create form */}
       {showForm && (
-        <div className="glass-panel p-6 mb-6">
-          <h2
-            className="text-sm font-semibold mb-4"
-            style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}
-          >
-            New API Key
-          </h2>
-          <form onSubmit={handleCreate} className="flex flex-col gap-4">
+        <div className="glass-panel p-6 mb-6" style={{ borderColor: 'rgba(0, 240, 255, 0.12)' }}>
+          <div className="flex items-center justify-between mb-5">
+            <h2
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}
+            >
+              New API Key
+            </h2>
+            <button
+              onClick={() => setShowForm(false)}
+              style={{ color: '#334155' }}
+              onMouseEnter={e => ((e.currentTarget).style.color = '#64748B')}
+              onMouseLeave={e => ((e.currentTarget).style.color = '#334155')}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+            </button>
+          </div>
+          <form onSubmit={handleCreate} className="flex flex-col gap-5">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+              <label className="text-xs font-medium" style={{ color: '#64748B', fontFamily: 'var(--font-outfit)' }}>
                 Label
               </label>
               <input
@@ -175,15 +227,18 @@ export default function ApiKeysPage() {
                 className="w-full max-w-sm px-4 py-2.5 text-sm outline-none"
                 style={{
                   background: 'rgba(5, 9, 20, 0.8)',
-                  border: '1px solid rgba(0, 240, 255, 0.2)',
+                  border: '1px solid rgba(0, 240, 255, 0.15)',
                   borderRadius: 4,
                   color: '#E2E8F0',
                   fontFamily: 'var(--font-jetbrains-mono)',
+                  transition: 'border-color 0.2s',
                 }}
+                onFocus={e => (e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)')}
+                onBlur={e => (e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.15)')}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+              <p className="text-xs font-medium" style={{ color: '#64748B', fontFamily: 'var(--font-outfit)' }}>
                 Scopes
               </p>
               <div className="flex flex-wrap gap-2">
@@ -198,15 +253,18 @@ export default function ApiKeysPage() {
                           active ? prev.filter(s => s !== scope) : [...prev, scope]
                         )
                       }
-                      className="text-xs px-3 py-1.5 transition-all"
+                      className="text-xs px-3 py-1.5 transition-all flex items-center gap-1.5"
                       style={{
                         fontFamily: 'var(--font-jetbrains-mono)',
-                        border: `1px solid ${active ? '#00F0FF' : 'rgba(100,116,139,0.3)'}`,
+                        border: `1px solid ${active ? 'rgba(0, 240, 255, 0.35)' : 'rgba(100,116,139,0.2)'}`,
                         borderRadius: 4,
-                        background: active ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                        color: active ? '#00F0FF' : '#64748B',
+                        background: active ? 'rgba(0, 240, 255, 0.08)' : 'transparent',
+                        color: active ? '#00F0FF' : '#475569',
                       }}
                     >
+                      {active && (
+                        <span className="material-symbols-outlined" style={{ fontSize: 11 }}>check</span>
+                      )}
                       {scope}
                     </button>
                   )
@@ -214,17 +272,22 @@ export default function ApiKeysPage() {
               </div>
             </div>
             {error && (
-              <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>{error}</p>
+              <p className="text-xs flex items-center gap-1.5" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>error</span>
+                {error}
+              </p>
             )}
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-1">
               <button type="submit" disabled={creating} className="btn-cyber px-5 py-2 text-xs disabled:opacity-50">
                 {creating ? 'Creating…' : 'Create key'}
               </button>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="text-sm px-4 py-2"
-                style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
+                className="text-sm px-4 py-2 transition-colors"
+                style={{ color: '#334155', fontFamily: 'var(--font-outfit)' }}
+                onMouseEnter={e => ((e.currentTarget).style.color = '#64748B')}
+                onMouseLeave={e => ((e.currentTarget).style.color = '#334155')}
               >
                 Cancel
               </button>
@@ -236,14 +299,24 @@ export default function ApiKeysPage() {
       {/* Keys table */}
       <div className="glass-panel overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center">
-            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>Loading…</p>
-          </div>
+          <TableSkeleton />
         ) : keys.length === 0 ? (
-          <div className="p-12 text-center">
-            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
-              No API keys yet — create one to start using the API
+          <div className="py-16 px-8 flex flex-col items-center text-center">
+            <div className="empty-state-icon">
+              <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#00F0FF', opacity: 0.7 }}>key</span>
+            </div>
+            <p className="text-sm font-medium mb-1.5" style={{ color: '#64748B', fontFamily: 'var(--font-outfit)' }}>
+              No API keys yet
             </p>
+            <p className="text-xs mb-6" style={{ color: '#334155', fontFamily: 'var(--font-outfit)', maxWidth: 280 }}>
+              Create an API key to start making authenticated requests to the AliasKit API.
+            </p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn-cyber px-5 py-2 text-xs"
+            >
+              Create first key
+            </button>
           </div>
         ) : (
           <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
@@ -252,8 +325,8 @@ export default function ApiKeysPage() {
                 {['Label', 'Prefix', 'Scopes', 'Last Used', 'Status', ''].map((h, i) => (
                   <th
                     key={i}
-                    className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                    style={{ color: '#475569', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
+                    className="px-5 py-3 text-left text-[10px] font-medium uppercase tracking-wider"
+                    style={{ color: '#334155', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
                   >
                     {h}
                   </th>
@@ -264,31 +337,31 @@ export default function ApiKeysPage() {
               {keys.map(key => (
                 <tr
                   key={key.id}
-                  className="border-b"
+                  className="agent-row border-b"
                   style={{
-                    borderColor: 'rgba(255, 255, 255, 0.04)',
+                    borderColor: 'rgba(255, 255, 255, 0.03)',
                     opacity: key.revoked_at ? 0.4 : 1,
                   }}
                 >
-                  <td className="px-5 py-3 text-sm" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
+                  <td className="px-5 py-3.5 text-sm font-medium" style={{ color: '#CBD5E1', fontFamily: 'var(--font-outfit)' }}>
                     {key.label}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <code className="text-xs" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
                       {key.key_prefix}…
                     </code>
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <div className="flex flex-wrap gap-1">
                       {key.scopes.map(s => (
                         <span
                           key={s}
-                          className="text-xs px-2 py-0.5"
+                          className="text-[10px] px-2 py-0.5"
                           style={{
-                            background: 'rgba(0, 240, 255, 0.07)',
-                            border: '1px solid rgba(0, 240, 255, 0.15)',
+                            background: 'rgba(0, 240, 255, 0.05)',
+                            border: '1px solid rgba(0, 240, 255, 0.12)',
                             borderRadius: 3,
-                            color: '#64748B',
+                            color: '#475569',
                             fontFamily: 'var(--font-jetbrains-mono)',
                           }}
                         >
@@ -297,30 +370,46 @@ export default function ApiKeysPage() {
                       ))}
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
-                    {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
+                  <td className="px-5 py-3.5 text-xs" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+                    {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : (
+                      <span style={{ color: '#1e293b' }}>Never</span>
+                    )}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     <span
-                      className="text-xs"
-                      style={{
-                        color: key.revoked_at ? '#FF0055' : '#39FF14',
-                        fontFamily: 'var(--font-jetbrains-mono)',
-                      }}
+                      className={`status-badge ${key.revoked_at ? 'status-suspended' : 'status-active'}`}
                     >
-                      {key.revoked_at ? 'REVOKED' : 'ACTIVE'}
+                      <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{ background: key.revoked_at ? '#FF0055' : '#39FF14' }}
+                      />
+                      {key.revoked_at ? 'Revoked' : 'Active'}
                     </span>
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3.5">
                     {!key.revoked_at && (
                       <button
                         onClick={() => revokeKey(key.id)}
-                        className="text-xs transition-colors"
-                        style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
-                        onMouseEnter={e => ((e.target as HTMLButtonElement).style.color = '#FF0055')}
-                        onMouseLeave={e => ((e.target as HTMLButtonElement).style.color = '#64748B')}
+                        className="text-[10px] px-2.5 py-1 transition-all rounded"
+                        style={{
+                          color: '#475569',
+                          fontFamily: 'var(--font-jetbrains-mono)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                        }}
+                        onMouseEnter={e => {
+                          const el = e.currentTarget
+                          el.style.color = '#FF0055'
+                          el.style.borderColor = 'rgba(255,0,85,0.3)'
+                          el.style.background = 'rgba(255,0,85,0.05)'
+                        }}
+                        onMouseLeave={e => {
+                          const el = e.currentTarget
+                          el.style.color = '#475569'
+                          el.style.borderColor = 'rgba(255,255,255,0.06)'
+                          el.style.background = 'transparent'
+                        }}
                       >
-                        revoke
+                        Revoke
                       </button>
                     )}
                   </td>
