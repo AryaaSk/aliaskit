@@ -49,7 +49,14 @@ await client.identities.sendEmail(identity.id, {
 - `identities.getSms(identityId, smsId)`
 - `identities.deleteSms(identityId, smsId)`
 
+## Documentation
+
+- [Quickstart guide](https://aliaskit.com/docs) — Get your first identity in minutes
+- [API Reference](https://aliaskit.com/docs/api-reference) — Complete endpoint documentation
+- [Concepts](https://aliaskit.com/docs/concepts) — Understand identities, email, phone, and authentication
+- [Error Handling](https://aliaskit.com/docs/errors) — Debug and retry patterns
+
 ## Runtime support
 
-Uses native `fetch` and works in Node 18+, browsers, Deno, and Bun.  
+Uses native `fetch` and works in Node 18+, browsers, Deno, and Bun.
 If `fetch` is not globally available in your runtime, pass `fetch` in constructor options.

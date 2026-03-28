@@ -44,22 +44,22 @@ export default function LoginPage() {
         >
           Alias<span style={{ color: '#00F0FF' }}>Kit</span>
         </span>
-        <p className="mt-2 text-xs tracking-widest uppercase" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-          Control Plane Access
+        <p className="mt-2 text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+          Sign in to your account
         </p>
       </div>
 
       <div className="glass-panel p-8">
         <h1
-          className="text-sm font-bold tracking-widest uppercase mb-6"
-          style={{ fontFamily: 'var(--font-jetbrains-mono)', color: '#00F0FF' }}
+          className="text-base font-semibold mb-6"
+          style={{ fontFamily: 'var(--font-outfit)', color: '#E2E8F0' }}
         >
-          &gt; Sign In
+          Sign in
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs tracking-widest uppercase" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
               Email
             </label>
             <input
@@ -82,7 +82,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs tracking-widest uppercase" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
               Password
             </label>
             <input
@@ -106,8 +106,8 @@ export default function LoginPage() {
 
           {error && (
             <div className="glass-panel-alert px-4 py-3">
-              <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-jetbrains-mono)' }}>
-                ERR: {error}
+              <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>
+                {error}
               </p>
             </div>
           )}
@@ -117,17 +117,14 @@ export default function LoginPage() {
             disabled={loading}
             className="btn-cyber w-full py-3 text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
+            {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-          No access?{' '}
-          <Link href="/register" className="transition-colors" style={{ color: '#00F0FF' }}
-            onMouseEnter={e => ((e.target as HTMLAnchorElement).style.color = '#fff')}
-            onMouseLeave={e => ((e.target as HTMLAnchorElement).style.color = '#00F0FF')}
-          >
-            Request credentials
+        <p className="mt-6 text-center text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="transition-colors" style={{ color: '#00F0FF' }}>
+            Sign up
           </Link>
         </p>
       </div>

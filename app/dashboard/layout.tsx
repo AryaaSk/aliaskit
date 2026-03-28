@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { getSupabaseClient } from '@/lib/supabase'
 
 const NAV = [
-  { href: '/dashboard', label: 'Overview', icon: '◈' },
-  { href: '/dashboard/identities', label: 'Identities', icon: '◎' },
-  { href: '/dashboard/api-keys', label: 'API Keys', icon: '⌗' },
+  { href: '/dashboard', label: 'Overview', icon: 'grid_view' },
+  { href: '/dashboard/identities', label: 'Identities', icon: 'fingerprint' },
+  { href: '/dashboard/api-keys', label: 'API Keys', icon: 'key' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -42,14 +42,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <aside
         className="w-[240px] flex-shrink-0 flex flex-col"
         style={{
-          background: 'rgba(5, 9, 20, 0.95)',
-          borderRight: '1px solid rgba(0, 240, 255, 0.1)',
+          background: 'rgba(8, 12, 26, 0.98)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.06)',
         }}
       >
         {/* Logo */}
         <div
           className="h-[64px] flex items-center px-6"
-          style={{ borderBottom: '1px solid rgba(0, 240, 255, 0.08)' }}
+          style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}
         >
           <Link href="/dashboard" className="flex items-center gap-2">
             <span
@@ -62,22 +62,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
           {NAV.map(({ href, label, icon }) => {
             const active = href === '/dashboard' ? pathname === href : pathname.startsWith(href)
             return (
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded transition-all text-sm"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm"
                 style={{
-                  fontFamily: 'var(--font-jetbrains-mono)',
-                  color: active ? '#00F0FF' : '#64748B',
-                  background: active ? 'rgba(0, 240, 255, 0.07)' : 'transparent',
-                  border: active ? '1px solid rgba(0, 240, 255, 0.15)' : '1px solid transparent',
+                  fontFamily: 'var(--font-outfit)',
+                  color: active ? '#E2E8F0' : '#64748B',
+                  background: active ? 'rgba(255, 255, 255, 0.07)' : 'transparent',
                 }}
               >
-                <span style={{ fontSize: '0.9rem' }}>{icon}</span>
+                <span
+                  className="material-symbols-outlined flex-shrink-0"
+                  style={{ fontSize: 18, color: active ? '#00F0FF' : '#64748B' }}
+                >
+                  {icon}
+                </span>
                 {label}
               </Link>
             )
@@ -87,34 +91,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* User */}
         <div
           className="px-4 py-4"
-          style={{ borderTop: '1px solid rgba(0, 240, 255, 0.08)' }}
+          style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}
         >
           {userEmail && (
             <p
               className="text-xs mb-3 truncate"
-              style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
+              style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
             >
               {userEmail}
             </p>
           )}
           <button
             onClick={handleLogout}
-            className="w-full text-xs py-2 px-3 text-left transition-colors rounded"
+            className="w-full text-xs py-2 px-3 text-left transition-colors rounded-lg"
             style={{
-              fontFamily: 'var(--font-jetbrains-mono)',
-              color: '#64748B',
-              border: '1px solid rgba(255, 0, 85, 0.2)',
+              fontFamily: 'var(--font-outfit)',
+              color: '#475569',
             }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#FF0055'
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255, 0, 85, 0.5)'
+              (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8'
+              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)'
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#64748B'
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255, 0, 85, 0.2)'
+              (e.currentTarget as HTMLButtonElement).style.color = '#475569'
+              ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
             }}
           >
-            [ DISCONNECT ]
+            Sign out
           </button>
         </div>
       </aside>

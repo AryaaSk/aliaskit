@@ -37,6 +37,34 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
               className="text-[10px] uppercase tracking-widest mt-4 mb-2"
               style={{ color: '#64748B', fontFamily: 'var(--font-syncopate), sans-serif' }}
             >
+              Understanding
+            </span>
+            <Link
+              href="/docs/concepts"
+              className="text-sm px-3 py-1.5 rounded transition-colors"
+              style={{ color: '#94A3B8', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+            >
+              Concepts
+            </Link>
+            <Link
+              href="/docs/examples"
+              className="text-sm px-3 py-1.5 rounded transition-colors"
+              style={{ color: '#94A3B8', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+            >
+              Examples
+            </Link>
+            <Link
+              href="/docs/errors"
+              className="text-sm px-3 py-1.5 rounded transition-colors"
+              style={{ color: '#94A3B8', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+            >
+              Error Handling
+            </Link>
+
+            <span
+              className="text-[10px] uppercase tracking-widest mt-4 mb-2"
+              style={{ color: '#64748B', fontFamily: 'var(--font-syncopate), sans-serif' }}
+            >
               Reference
             </span>
             <Link

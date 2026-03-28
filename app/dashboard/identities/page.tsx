@@ -56,8 +56,8 @@ export default function IdentitiesPage() {
           >
             Identities
           </h1>
-          <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-            {loading ? '...' : `${identities.length} total`}
+          <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+            {loading ? '' : `${identities.length} total`}
           </p>
         </div>
         <button
@@ -79,17 +79,17 @@ export default function IdentitiesPage() {
       <div className="glass-panel overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              LOADING...
+            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+              Loading…
             </p>
           </div>
         ) : identities.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-xs tracking-widest mb-2" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              NO IDENTITIES PROVISIONED
+            <p className="text-sm font-medium mb-2" style={{ color: '#64748B', fontFamily: 'var(--font-outfit)' }}>
+              No identities yet
             </p>
-            <p className="text-xs" style={{ color: '#2d3748', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              Click &quot;+ NEW IDENTITY&quot; to provision your first synthetic identity.
+            <p className="text-sm" style={{ color: '#334155', fontFamily: 'var(--font-outfit)' }}>
+              Click &quot;+ New identity&quot; to provision your first agent identity.
             </p>
           </div>
         ) : (
@@ -99,8 +99,8 @@ export default function IdentitiesPage() {
                 {['Name', 'Email', 'Phone', 'Status', 'Created'].map(h => (
                   <th
                     key={h}
-                    className="px-5 py-3 text-left text-xs tracking-widest uppercase"
-                    style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)', fontWeight: 400 }}
+                    className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                    style={{ color: '#475569', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
                   >
                     {h}
                   </th>

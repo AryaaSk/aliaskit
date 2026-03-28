@@ -46,10 +46,10 @@ export default function DashboardPage() {
           className="text-xl font-bold tracking-widest uppercase mb-1"
           style={{ fontFamily: 'var(--font-syncopate)', color: '#E2E8F0' }}
         >
-          Control Panel
+          Overview
         </h1>
-        <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-          System overview — {new Date().toISOString().split('T')[0]}
+        <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>
 
@@ -67,16 +67,16 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {cards.map(({ label, value, color, href }) => (
             <Link key={label} href={href}>
-              <div className="glass-panel p-6 transition-all hover:border-[rgba(0,240,255,0.3)] cursor-pointer">
+              <div className="glass-panel p-6 transition-all cursor-pointer hover:border-white/10">
                 <p
-                  className="text-xs tracking-widest uppercase mb-3"
-                  style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
+                  className="text-xs uppercase tracking-wider mb-3"
+                  style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
                 >
                   {label}
                 </p>
                 <p
                   className="text-3xl font-bold tabular-nums"
-                  style={{ color, fontFamily: 'var(--font-jetbrains-mono)', textShadow: `0 0 12px ${color}55` }}
+                  style={{ color, fontFamily: 'var(--font-jetbrains-mono)' }}
                 >
                   {value.toLocaleString()}
                 </p>
@@ -89,39 +89,35 @@ export default function DashboardPage() {
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link href="/dashboard/identities">
-          <div
-            className="glass-panel p-6 transition-all cursor-pointer"
-            style={{ borderColor: 'rgba(0, 240, 255, 0.1)' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0, 240, 255, 0.3)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0, 240, 255, 0.1)')}
-          >
+          <div className="glass-panel p-6 transition-all cursor-pointer hover:border-white/10 group">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs tracking-widest uppercase" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
-                ◎ Identities
-              </span>
-              <span className="text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>→</span>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#00F0FF' }}>fingerprint</span>
+                <span className="text-sm font-medium" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
+                  Identities
+                </span>
+              </div>
+              <span className="text-sm transition-colors" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>→</span>
             </div>
-            <p className="text-sm" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              Manage synthetic identities — email, phone, metadata
+            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+              Manage agent identities — email, phone, metadata
             </p>
           </div>
         </Link>
 
         <Link href="/dashboard/api-keys">
-          <div
-            className="glass-panel p-6 transition-all cursor-pointer"
-            style={{ borderColor: 'rgba(0, 240, 255, 0.1)' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0, 240, 255, 0.3)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0, 240, 255, 0.1)')}
-          >
+          <div className="glass-panel p-6 transition-all cursor-pointer hover:border-white/10 group">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs tracking-widest uppercase" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
-                ⌗ API Keys
-              </span>
-              <span className="text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>→</span>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#00F0FF' }}>key</span>
+                <span className="text-sm font-medium" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
+                  API Keys
+                </span>
+              </div>
+              <span className="text-sm transition-colors" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>→</span>
             </div>
-            <p className="text-sm" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              Create and revoke API access keys with scoped permissions
+            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+              Create and revoke API keys with scoped permissions
             </p>
           </div>
         </Link>
