@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -37,6 +37,15 @@ export default function IdentityDetailPage() {
   const [loadingIdentity, setLoadingIdentity] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(false)
 
+  // Compose state
+  const [showCompose, setShowCompose] = useState(false)
+  const [composeTo, setComposeTo] = useState('')
+  const [composeSubject, setComposeSubject] = useState('')
+  const [composeBody, setComposeBody] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState('')
+  const [sendSuccess, setSendSuccess] = useState(false)
+
   useEffect(() => {
     fetch(`/api/dashboard/identities/${id}`)
       .then(r => (r.ok ? r.json() : null))
@@ -70,6 +79,35 @@ export default function IdentityDetailPage() {
     const nextPage = page + 1
     setPage(nextPage)
     loadMessages(nextPage)
+  }
+
+  async function handleSendEmail(e: FormEvent) {
+    e.preventDefault()
+    setSending(true)
+    setSendError('')
+    setSendSuccess(false)
+    const res = await fetch(`/api/dashboard/identities/${id}/send-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: composeTo, subject: composeSubject, body_text: composeBody }),
+    })
+    setSending(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setSendError((data as { error?: string }).error ?? 'Failed to send')
+    } else {
+      setSendSuccess(true)
+      setComposeTo('')
+      setComposeSubject('')
+      setComposeBody('')
+      setTimeout(() => {
+        setShowCompose(false)
+        setSendSuccess(false)
+        setMessages([])
+        setPage(0)
+        loadMessages(0)
+      }, 1500)
+    }
   }
 
   const statusColor = (s: string) =>
@@ -144,23 +182,108 @@ export default function IdentityDetailPage() {
         </div>
       </div>
 
-      {/* Inbox tabs */}
-      <div className="mb-4 flex gap-1">
-        {(['email', 'sms'] as const).map(t => (
+      {/* Inbox tabs + compose button */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex gap-1">
+          {(['email', 'sms'] as const).map(t => (
+            <button
+              key={t}
+              onClick={() => { setTab(t); setShowCompose(false) }}
+              className="px-4 py-2 text-sm transition-all rounded-lg"
+              style={{
+                fontFamily: 'var(--font-outfit)',
+                background: tab === t ? 'rgba(255, 255, 255, 0.07)' : 'transparent',
+                color: tab === t ? '#E2E8F0' : '#475569',
+              }}
+            >
+              {t === 'email' ? 'Email' : 'SMS'}
+            </button>
+          ))}
+        </div>
+        {tab === 'email' && (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className="px-4 py-2 text-sm transition-all rounded-lg"
-            style={{
-              fontFamily: 'var(--font-outfit)',
-              background: tab === t ? 'rgba(255, 255, 255, 0.07)' : 'transparent',
-              color: tab === t ? '#E2E8F0' : '#475569',
-            }}
+            onClick={() => { setShowCompose(v => !v); setSendError(''); setSendSuccess(false) }}
+            className="btn-cyber px-4 py-1.5 text-xs"
           >
-            {t === 'email' ? 'Email' : 'SMS'}
+            {showCompose ? 'Cancel' : 'Compose'}
           </button>
-        ))}
+        )}
       </div>
+
+      {/* Compose form */}
+      {tab === 'email' && showCompose && (
+        <div className="glass-panel p-6 mb-4">
+          <h3
+            className="text-xs font-medium uppercase tracking-wider mb-4"
+            style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
+          >
+            New email from <span style={{ color: '#94a3b8' }}>{identity.email}</span>
+          </h3>
+          <form onSubmit={handleSendEmail} className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>To</label>
+              <input
+                type="email"
+                value={composeTo}
+                onChange={e => setComposeTo(e.target.value)}
+                required
+                placeholder="recipient@example.com"
+                className="px-3 py-2 rounded-lg text-sm outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#E2E8F0',
+                  fontFamily: 'var(--font-outfit)',
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>Subject</label>
+              <input
+                type="text"
+                value={composeSubject}
+                onChange={e => setComposeSubject(e.target.value)}
+                placeholder="(optional)"
+                className="px-3 py-2 rounded-lg text-sm outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#E2E8F0',
+                  fontFamily: 'var(--font-outfit)',
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>Message</label>
+              <textarea
+                value={composeBody}
+                onChange={e => setComposeBody(e.target.value)}
+                required
+                rows={5}
+                placeholder="Write your message…"
+                className="px-3 py-2 rounded-lg text-sm outline-none resize-y"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#E2E8F0',
+                  fontFamily: 'var(--font-outfit)',
+                }}
+              />
+            </div>
+            {sendError && (
+              <p className="text-xs" style={{ color: '#FF0055', fontFamily: 'var(--font-outfit)' }}>{sendError}</p>
+            )}
+            {sendSuccess && (
+              <p className="text-xs" style={{ color: '#39FF14', fontFamily: 'var(--font-outfit)' }}>Email sent.</p>
+            )}
+            <div>
+              <button type="submit" disabled={sending} className="btn-cyber px-5 py-2 text-xs disabled:opacity-50">
+                {sending ? 'Sending…' : 'Send'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="glass-panel overflow-hidden">
