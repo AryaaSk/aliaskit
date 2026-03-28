@@ -1,3 +1,5 @@
+'use client'
+
 const LogoSvg = () => (
   <svg
     className="text-primary"
