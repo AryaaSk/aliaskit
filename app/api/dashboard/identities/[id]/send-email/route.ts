@@ -1,10 +1,14 @@
 import { getSupabaseServerClient } from '@/lib/supabase-server'
+import { requireDashboardAuth, isDashboardAuthContext } from '@/lib/auth'
 
 type Ctx = { params: Promise<{ id: string }> }
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? ''
 
 export async function POST(request: Request, { params }: Ctx) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
+
   const { id } = await params
 
   let body: Record<string, unknown>

@@ -1,9 +1,13 @@
 import { getSupabaseServerClient } from '@/lib/supabase-server'
 import { generateName, generateDateOfBirth, generateEmailUsername } from '@/lib/names'
+import { requireDashboardAuth, isDashboardAuthContext } from '@/lib/auth'
 
 const DEFAULT_DOMAIN = process.env.EMAIL_DEFAULT_DOMAIN ?? 'aliaskit.to'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
+
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('identities')
@@ -15,7 +19,9 @@ export async function GET() {
   return Response.json({ data })
 }
 
-export async function POST() {
+export async function POST(request: Request) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
   const name = generateName()
   const date_of_birth = generateDateOfBirth()
   const email = `${generateEmailUsername(name)}@${DEFAULT_DOMAIN}`
