@@ -28,13 +28,13 @@ export default function Home() {
       {/* Minimal footer */}
       <footer
         className="w-full py-8 px-6 text-center"
-        style={{ borderTop: '1px solid rgba(0, 240, 255, 0.07)' }}
+        style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}
       >
         <span
           className="text-xs"
-          style={{ color: '#2d3748', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+          style={{ color: '#334155', fontFamily: 'var(--font-outfit), sans-serif' }}
         >
-          © 2026 ALIASKIT SYSTEMS INC.
+          © 2026 AliasKit
         </span>
       </footer>
     </>

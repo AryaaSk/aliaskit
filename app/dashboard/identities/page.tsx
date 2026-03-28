@@ -95,7 +95,7 @@ export default function IdentitiesPage() {
         ) : (
           <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(0, 240, 255, 0.1)' }}>
+              <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
                 {['Name', 'Email', 'Phone', 'Status', 'Created'].map(h => (
                   <th
                     key={h}
@@ -112,7 +112,7 @@ export default function IdentitiesPage() {
                 <tr
                   key={identity.id}
                   className="agent-row border-b"
-                  style={{ borderColor: 'rgba(0, 240, 255, 0.05)' }}
+                  style={{ borderColor: 'rgba(255, 255, 255, 0.04)' }}
                 >
                   <td className="px-5 py-3">
                     <Link

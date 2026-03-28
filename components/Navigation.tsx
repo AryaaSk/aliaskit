@@ -28,7 +28,7 @@ export default function Navigation() {
         background: 'rgba(5, 9, 20, 0.85)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(0, 240, 255, 0.12)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
       }}
     >
       <div className="flex items-center justify-between w-full max-w-[1200px] mx-auto">

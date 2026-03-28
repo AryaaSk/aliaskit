@@ -78,8 +78,8 @@ export default function IdentityDetailPage() {
   if (loadingIdentity) {
     return (
       <div className="p-8">
-        <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-          LOADING...
+        <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+          Loading…
         </p>
       </div>
     )
@@ -90,10 +90,10 @@ export default function IdentityDetailPage() {
   return (
     <div className="p-8">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-6 text-xs" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: '#64748B' }}>
-        <Link href="/dashboard/identities" className="hover:text-[#00F0FF] transition-colors">Identities</Link>
+      <div className="flex items-center gap-2 mb-6 text-sm" style={{ fontFamily: 'var(--font-outfit)', color: '#475569' }}>
+        <Link href="/dashboard/identities" className="hover:text-[#94a3b8] transition-colors">Identities</Link>
         <span>/</span>
-        <span style={{ color: '#E2E8F0' }}>{identity.name}</span>
+        <span style={{ color: '#94a3b8' }}>{identity.name}</span>
       </div>
 
       {/* Identity card */}
@@ -133,7 +133,7 @@ export default function IdentityDetailPage() {
             { label: 'Created', value: new Date(identity.created_at).toLocaleDateString() },
           ].map(({ label, value }) => (
             <div key={label}>
-              <p className="text-xs tracking-widest uppercase mb-1" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+              <p className="text-xs font-medium uppercase tracking-wider mb-1" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
                 {label}
               </p>
               <p className="text-sm" style={{ color: '#E2E8F0', fontFamily: 'var(--font-jetbrains-mono)' }}>
@@ -150,16 +150,14 @@ export default function IdentityDetailPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="px-4 py-2 text-xs tracking-widest uppercase transition-all"
+            className="px-4 py-2 text-sm transition-all rounded-lg"
             style={{
-              fontFamily: 'var(--font-jetbrains-mono)',
-              border: `1px solid ${tab === t ? '#00F0FF' : 'rgba(0,240,255,0.1)'}`,
-              borderRadius: 4,
-              background: tab === t ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-              color: tab === t ? '#00F0FF' : '#64748B',
+              fontFamily: 'var(--font-outfit)',
+              background: tab === t ? 'rgba(255, 255, 255, 0.07)' : 'transparent',
+              color: tab === t ? '#E2E8F0' : '#475569',
             }}
           >
-            {t === 'email' ? '✉ Email' : '📱 SMS'}
+            {t === 'email' ? 'Email' : 'SMS'}
           </button>
         ))}
       </div>
@@ -168,12 +166,12 @@ export default function IdentityDetailPage() {
       <div className="glass-panel overflow-hidden">
         {loadingMessages && messages.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>LOADING...</p>
+            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>Loading…</p>
           </div>
         ) : messages.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-xs tracking-widest" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              NO {tab.toUpperCase()} MESSAGES
+            <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+              No {tab} messages
             </p>
           </div>
         ) : (
@@ -181,19 +179,19 @@ export default function IdentityDetailPage() {
             {messages.map(msg => (
               <div key={msg.id} className="px-5 py-4 agent-row">
                 <div className="flex items-start justify-between mb-1">
-                  <span className="text-xs font-bold" style={{ color: '#E2E8F0', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  <span className="text-sm font-medium" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
                     {msg.from}
                   </span>
-                  <span className="text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  <span className="text-xs" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
                     {new Date(msg.received_at).toLocaleString()}
                   </span>
                 </div>
                 {msg.subject && (
-                  <p className="text-xs mb-1" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  <p className="text-sm mb-1" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
                     {msg.subject}
                   </p>
                 )}
-                <p className="text-xs" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)', whiteSpace: 'pre-wrap' }}>
+                <p className="text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)', whiteSpace: 'pre-wrap' }}>
                   {msg.body}
                 </p>
               </div>
@@ -206,7 +204,7 @@ export default function IdentityDetailPage() {
                   className="text-xs transition-colors"
                   style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}
                 >
-                  {loadingMessages ? 'LOADING...' : 'LOAD MORE'}
+                  {loadingMessages ? 'Loading…' : 'Load more'}
                 </button>
               </div>
             )}
