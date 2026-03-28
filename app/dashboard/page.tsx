@@ -8,12 +8,13 @@ type Stats = {
   activeIdentities: number
   totalApiKeys: number
   activeApiKeys: number
+  messagesToday: number
 }
 
 // This fetches via a server action (we call our own API route)
 async function fetchStats(): Promise<Stats> {
   const res = await fetch('/api/dashboard/stats')
-  if (!res.ok) return { totalIdentities: 0, activeIdentities: 0, totalApiKeys: 0, activeApiKeys: 0 }
+  if (!res.ok) return { totalIdentities: 0, activeIdentities: 0, totalApiKeys: 0, activeApiKeys: 0, messagesToday: 0 }
   return res.json()
 }
 
@@ -32,7 +33,7 @@ export default function DashboardPage() {
     ? [
         { label: 'Total Identities', value: stats.totalIdentities, color: '#00F0FF', href: '/dashboard/identities' },
         { label: 'Active Identities', value: stats.activeIdentities, color: '#39FF14', href: '/dashboard/identities' },
-        { label: 'API Keys', value: stats.totalApiKeys, color: '#00F0FF', href: '/dashboard/api-keys' },
+        { label: 'Messages Today', value: stats.messagesToday, color: '#00F0FF', href: '/dashboard/identities' },
         { label: 'Active Keys', value: stats.activeApiKeys, color: '#39FF14', href: '/dashboard/api-keys' },
       ]
     : []
