@@ -1,35 +1,4 @@
-'use client'
-
-import { useState } from 'react'
-
 export default function WaitlistSection() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email) return
-    setStatus('loading')
-    try {
-      const res = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      const data = await res.json()
-      if (data.duplicate) {
-        setStatus('duplicate')
-      } else if (data.success) {
-        setStatus('success')
-        setEmail('')
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
-  }
-
   return (
     <section
       id="waitlist"
@@ -44,92 +13,88 @@ export default function WaitlistSection() {
         }}
       />
 
-      <div className="max-w-[560px] mx-auto relative z-10 text-center flex flex-col items-center gap-10">
-        {/* Heading */}
-        <div className="flex flex-col items-center gap-4">
-          <h2
-            className="text-3xl lg:text-[42px] font-bold text-white uppercase leading-tight"
-            style={{ fontFamily: 'var(--font-syncopate), sans-serif' }}
-          >
-            Sign Up to Be Part of Beta Testing
-          </h2>
-          <p
-            className="text-base leading-relaxed"
-            style={{ color: '#64748B', fontFamily: 'var(--font-outfit), sans-serif' }}
-          >
-            We&apos;re opening access to a limited number of early operators.
-            Register below and we&apos;ll reach out when your spot is ready.
-          </p>
-        </div>
-
-        {/* Form */}
-        {status === 'success' ? (
-          <div
-            className="w-full flex flex-col items-center gap-3 py-6"
-            style={{
-              border: '1px solid rgba(57, 255, 20, 0.2)',
-              borderRadius: 8,
-              background: 'rgba(57, 255, 20, 0.04)',
-            }}
-          >
-            <span
-              className="text-2xl"
-              style={{ color: '#39FF14', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+      <div className="max-w-[760px] mx-auto relative z-10 flex flex-col lg:flex-row items-center gap-12">
+        {/* Left: copy + buttons */}
+        <div className="flex-1 flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+          <div className="flex flex-col gap-4">
+            <h2
+              className="text-3xl lg:text-[42px] font-bold text-white uppercase leading-tight"
+              style={{ fontFamily: 'var(--font-syncopate), sans-serif' }}
             >
-              ✓
-            </span>
+              Start Building Today
+            </h2>
             <p
-              className="text-sm"
-              style={{ color: '#39FF14', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
+              className="text-base leading-relaxed max-w-md"
+              style={{ color: '#64748B', fontFamily: 'var(--font-outfit), sans-serif' }}
             >
-              You&apos;re on the list. We&apos;ll be in touch.
+              AliasKit is live and free to try. Provision your first agent identity in
+              under a minute — no waitlist, no credit card required.
             </p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              required
-              disabled={status === 'loading'}
-              className="w-full h-[52px] px-5 text-sm text-white placeholder-[#64748B] outline-none transition-all"
-              style={{
-                fontFamily: 'var(--font-outfit), sans-serif',
-                background: 'rgba(11, 18, 33, 0.8)',
-                border: '1px solid rgba(0, 240, 255, 0.2)',
-                borderRadius: 6,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.5)')}
-              onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.2)')}
-            />
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="btn-cyber w-full h-[52px] text-sm disabled:opacity-60"
-            >
-              {status === 'loading' ? 'Submitting...' : 'Request Beta Access'}
-            </button>
 
-            {status === 'duplicate' && (
-              <p
-                className="text-xs text-center"
+          <div className="flex items-center gap-4 flex-wrap justify-center lg:justify-start">
+            <a
+              href="/dashboard"
+              className="btn-cyber flex items-center justify-center text-sm"
+              style={{ width: 200, height: 48 }}
+            >
+              Open Dashboard
+            </a>
+            <a
+              href="/docs"
+              className="hero-learn-more"
+            >
+              Read the Docs →
+            </a>
+          </div>
+        </div>
+
+        {/* Right: REST snippet */}
+        <div className="w-full lg:w-[380px] flex-shrink-0">
+          <div
+            className="rounded-lg overflow-hidden"
+            style={{ border: '1px solid rgba(0, 240, 255, 0.15)', background: '#02040b' }}
+          >
+            {/* Title bar */}
+            <div
+              className="flex items-center gap-1.5 px-4 py-3"
+              style={{ background: 'rgba(0, 0, 0, 0.4)', borderBottom: '1px solid rgba(0, 240, 255, 0.08)' }}
+            >
+              {['#FF0055', '#F59E0B', '#39FF14'].map((c) => (
+                <div
+                  key={c}
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ background: c, opacity: 0.6 }}
+                />
+              ))}
+              <span
+                className="ml-2 text-[11px]"
                 style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
               >
-                Already registered — you&apos;re on the list.
-              </p>
-            )}
-            {status === 'error' && (
-              <p
-                className="text-xs text-center"
-                style={{ color: '#FF0055', fontFamily: 'var(--font-jetbrains-mono), monospace' }}
-              >
-                Something went wrong. Please try again.
-              </p>
-            )}
-          </form>
-        )}
+                terminal
+              </span>
+            </div>
+
+            {/* Code */}
+            <div className="p-5 flex flex-col gap-1 text-xs overflow-x-auto" style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}>
+              <div className="flex gap-2">
+                <span style={{ color: '#39FF14' }}>$</span>
+                <span style={{ color: '#E2E8F0' }}>curl -X POST https://api.aliaskit.com/v1/identities \</span>
+              </div>
+              <div className="pl-4" style={{ color: '#E2E8F0' }}>{'  -H "Authorization: Bearer <api_key>" \\'}</div>
+              <div className="pl-4" style={{ color: '#E2E8F0' }}>{'  -H "Content-Type: application/json" \\'}</div>
+              <div className="pl-4 pb-2" style={{ color: '#E2E8F0' }}>{"  -d '{\"label\": \"agent-7f3a\"}'"}</div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 8 }}>
+                <div style={{ color: '#64748B' }}>{'{'}</div>
+                <div className="pl-4"><span style={{ color: '#7b9cff' }}>&quot;id&quot;</span><span style={{ color: '#64748B' }}>: </span><span style={{ color: '#39FF14' }}>&quot;id_a1b2c3d4&quot;</span><span style={{ color: '#64748B' }}>,</span></div>
+                <div className="pl-4"><span style={{ color: '#7b9cff' }}>&quot;email&quot;</span><span style={{ color: '#64748B' }}>: </span><span style={{ color: '#00F0FF' }}>&quot;agent-7f3a@aliaskit.email&quot;</span><span style={{ color: '#64748B' }}>,</span></div>
+                <div className="pl-4"><span style={{ color: '#7b9cff' }}>&quot;phone&quot;</span><span style={{ color: '#64748B' }}>: </span><span style={{ color: '#00F0FF' }}>&quot;+14155550192&quot;</span><span style={{ color: '#64748B' }}>,</span></div>
+                <div className="pl-4"><span style={{ color: '#7b9cff' }}>&quot;status&quot;</span><span style={{ color: '#64748B' }}>: </span><span style={{ color: '#39FF14' }}>&quot;active&quot;</span></div>
+                <div style={{ color: '#64748B' }}>{'}'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

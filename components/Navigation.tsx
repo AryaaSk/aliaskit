@@ -43,23 +43,34 @@ export default function Navigation() {
           </span>
         </div>
 
-        {/* Coming Soon badge */}
-        <div
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full text-xs"
-          style={{
-            fontFamily: 'var(--font-syncopate), sans-serif',
-            color: '#64748B',
-            border: '1px solid rgba(100, 116, 139, 0.2)',
-            background: 'rgba(11, 18, 33, 0.6)',
-            letterSpacing: '0.1em',
-          }}
-        >
-          <span
-            className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#00F0FF', boxShadow: '0 0 6px #00F0FF', animation: 'pulse 2s infinite' }}
-          />
-          COMING SOON
-        </div>
+        {/* Nav links */}
+        <nav className="flex items-center gap-6">
+          <a
+            href="/dashboard"
+            className="text-sm"
+            style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#E2E8F0')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Dashboard
+          </a>
+          <a
+            href="/docs"
+            className="text-sm"
+            style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit), sans-serif', textDecoration: 'none' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#E2E8F0')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Docs
+          </a>
+          <a
+            href="/dashboard"
+            className="btn-cyber flex items-center justify-center text-xs"
+            style={{ width: 120, height: 36 }}
+          >
+            Get Started
+          </a>
+        </nav>
       </div>
     </header>
   )

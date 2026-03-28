@@ -62,14 +62,14 @@ export default function HeroSection() {
         {/* CTA */}
         <div className="flex items-center gap-4 justify-center lg:justify-start">
           <a
-            href="#waitlist"
+            href="/dashboard"
             className="btn-cyber flex items-center justify-center text-sm"
             style={{ width: 200, height: 48 }}
           >
-            Join the Beta
+            Get Started
           </a>
-          <a href="#waitlist" className="hero-learn-more">
-            Learn more →
+          <a href="/docs" className="hero-learn-more">
+            Read Docs →
           </a>
         </div>
       </div>

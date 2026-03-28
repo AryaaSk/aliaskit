@@ -4,11 +4,7 @@ const items = [
   { icon: 'location_on',        label: 'Place of Birth',       detail: 'City & country of origin' },
   { icon: 'mail',               label: 'Email Address',        detail: 'Working inbox included' },
   { icon: 'phone',              label: 'Phone Number',         detail: '+1 number with SMS' },
-  { icon: 'home',               label: 'Mailing Address',      detail: 'Physical address on record' },
-  { icon: 'account_balance',    label: 'Bank Account',         detail: 'Sort code & account number' },
-  { icon: 'credit_card',        label: 'Debit Card',           detail: 'Virtual card with CVV' },
   { icon: 'language',           label: 'Nationality',          detail: 'Country & citizenship record' },
-  { icon: 'fingerprint',        label: 'Government ID',        detail: 'Passport / national ID number' },
 ]
 
 export default function FeatureCards() {
