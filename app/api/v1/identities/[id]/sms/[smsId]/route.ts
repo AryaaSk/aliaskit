@@ -43,3 +43,37 @@ export async function GET(request: NextRequest, { params }: Ctx) {
 
   return Response.json({ ...sms, read: true })
 }
+
+export async function DELETE(request: NextRequest, { params }: Ctx) {
+  const auth = await requireAuth(request)
+  if (!isAuthContext(auth)) return auth
+
+  const { id, smsId } = await params
+  const supabase = getSupabaseServerClient()
+
+  const { data: identity, error: idErr } = await supabase
+    .from('identities')
+    .select('id')
+    .eq('id', id)
+    .eq('api_key_id', auth.apiKeyId)
+    .neq('status', 'deleted')
+    .single()
+
+  if (idErr || !identity) {
+    return Response.json({ error: 'Identity not found' }, { status: 404 })
+  }
+
+  const { data, error } = await supabase
+    .from('sms_messages')
+    .delete()
+    .eq('id', smsId)
+    .eq('identity_id', id)
+    .select('id')
+    .single()
+
+  if (error || !data) {
+    return Response.json({ error: 'SMS not found' }, { status: 404 })
+  }
+
+  return Response.json({ success: true })
+}

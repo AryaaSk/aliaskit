@@ -1,7 +1,11 @@
 import { randomBytes, createHash } from 'crypto'
 import { getSupabaseServerClient } from '@/lib/supabase-server'
+import { requireDashboardAuth, isDashboardAuthContext } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
+
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('api_keys')
@@ -13,6 +17,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
   let body: Record<string, unknown> = {}
   try { body = await request.json() } catch { /* defaults */ }
 

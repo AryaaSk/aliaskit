@@ -1,6 +1,10 @@
 import { getSupabaseServerClient } from '@/lib/supabase-server'
+import { requireDashboardAuth, isDashboardAuthContext } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const auth = await requireDashboardAuth(request)
+  if (!isDashboardAuthContext(auth)) return auth
+
   const supabase = getSupabaseServerClient()
 
   const [identitiesRes, apiKeysRes] = await Promise.all([

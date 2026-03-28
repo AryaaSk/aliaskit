@@ -37,10 +37,7 @@ export default function RootLayout({
       lang="en"
       className={`${syncopate.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
     >
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </head>
-<body className="antialiased min-h-screen flex flex-col">{children}</body>
+      <body className="antialiased min-h-screen flex flex-col">{children}</body>
     </html>
   )
 }
