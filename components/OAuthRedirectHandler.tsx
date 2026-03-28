@@ -6,11 +6,10 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 /**
  * Safety net for Supabase OAuth redirects.
  *
- * When the Supabase project's "Site URL" is the app root ("/"), Google OAuth
- * may redirect back to "/" (the landing page) with ?code=... instead of going
- * to /auth/callback. This component detects that situation on any page and
- * forwards the user to the proper callback route so the PKCE code exchange
- * can proceed.
+ * Supabase may redirect back to "/" (the landing page) instead of
+ * /auth/callback. This handles both:
+ *   - PKCE flow: ?code=... in query params
+ *   - Implicit flow: #access_token=... in hash fragment
  */
 export default function OAuthRedirectHandler() {
   const router = useRouter()
@@ -18,10 +17,19 @@ export default function OAuthRedirectHandler() {
   const pathname = usePathname()
 
   useEffect(() => {
+    if (pathname === '/auth/callback') return
+
     const code = searchParams.get('code')
-    // Only redirect if there's an OAuth code AND we're not already on the callback page
-    if (code && pathname !== '/auth/callback') {
+    if (code) {
       router.replace(`/auth/callback?${searchParams.toString()}`)
+      return
+    }
+
+    // Implicit flow: hash fragment contains access_token
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      // Use window.location to preserve the hash fragment (Next.js router strips it)
+      window.location.replace(`/auth/callback${hash}`)
     }
   }, [pathname, router, searchParams])
 

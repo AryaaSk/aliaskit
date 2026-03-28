@@ -12,39 +12,58 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const supabase = getSupabaseClient()
 
-    // onAuthStateChange auto-detects the #access_token hash fragment
-    // from implicit OAuth flow and establishes the session.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
-        document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
-        router.replace('/dashboard')
-      }
-    })
+    function setSessionCookies(session: { access_token: string }) {
+      document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
+      document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
+    }
 
-    // Also check for an existing session (e.g. page refresh, email confirm links)
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    async function handleCallback() {
+      // 1. Try to parse tokens directly from hash fragment (implicit flow)
+      const hash = window.location.hash.substring(1)
+      if (hash) {
+        const params = new URLSearchParams(hash)
+        const accessToken = params.get('access_token')
+        const refreshToken = params.get('refresh_token')
+
+        if (accessToken && refreshToken) {
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          })
+          if (!error && data.session) {
+            setSessionCookies(data.session)
+            // Clear the hash from URL before navigating
+            window.history.replaceState(null, '', window.location.pathname)
+            router.replace('/dashboard')
+            return
+          }
+          if (error) {
+            setErrorMsg(error.message)
+            setStatus('error')
+            return
+          }
+        }
+      }
+
+      // 2. Fallback: check for existing session (e.g. already exchanged, email confirm)
+      const { data: { session }, error } = await supabase.auth.getSession()
       if (error) {
         setErrorMsg(error.message)
         setStatus('error')
         return
       }
       if (session) {
-        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
-        document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
+        setSessionCookies(session)
         router.replace('/dashboard')
+        return
       }
-    })
 
-    const timeout = setTimeout(() => {
-      setErrorMsg('Sign-in timed out — please try again.')
+      // 3. Nothing worked
+      setErrorMsg('Sign-in failed — please try again.')
       setStatus('error')
-    }, 8000)
-
-    return () => {
-      subscription.unsubscribe()
-      clearTimeout(timeout)
     }
+
+    handleCallback()
   }, [router])
 
   if (status === 'error') {
