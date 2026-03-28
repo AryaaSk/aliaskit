@@ -65,7 +65,7 @@ export default function IdentitiesPage() {
           disabled={creating}
           className="btn-cyber px-5 py-2.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {creating ? 'PROVISIONING...' : '+ NEW IDENTITY'}
+          {creating ? 'Provisioning…' : '+ New identity'}
         </button>
       </div>
 
@@ -123,10 +123,10 @@ export default function IdentitiesPage() {
                       {identity.name}
                     </Link>
                   </td>
-                  <td className="px-5 py-3" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  <td className="px-5 py-3 text-sm" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
                     {identity.email}
                   </td>
-                  <td className="px-5 py-3" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  <td className="px-5 py-3 text-sm" style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}>
                     {identity.phone_number ?? '—'}
                   </td>
                   <td className="px-5 py-3">
