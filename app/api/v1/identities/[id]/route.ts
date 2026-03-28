@@ -1,8 +1,25 @@
 import type { NextRequest } from 'next/server'
 import { requireAuth, isAuthContext } from '@/lib/auth'
 import { getSupabaseServerClient } from '@/lib/supabase-server'
+import twilio from 'twilio'
 
 type Ctx = { params: Promise<{ id: string }> }
+
+async function releaseTwilioNumber(phoneNumber: string): Promise<void> {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID
+  const authToken = process.env.TWILIO_AUTH_TOKEN
+  if (!accountSid || !authToken) return
+
+  const client = twilio(accountSid, authToken)
+  try {
+    const records = await client.incomingPhoneNumbers.list({ phoneNumber, limit: 1 })
+    if (records.length > 0) {
+      await client.incomingPhoneNumbers(records[0].sid).remove()
+    }
+  } catch {
+    // Fire-and-forget — don't fail the delete if Twilio release fails
+  }
+}
 
 export async function GET(request: NextRequest, { params }: Ctx) {
   const auth = await requireAuth(request)
@@ -81,11 +98,16 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     .eq('id', id)
     .eq('api_key_id', auth.apiKeyId)
     .neq('status', 'deleted')
-    .select('id')
+    .select('id, phone_number, phone_provider')
     .single()
 
   if (error || !data) {
     return Response.json({ error: 'Identity not found' }, { status: 404 })
+  }
+
+  // Release Twilio number asynchronously — don't block the response
+  if (data.phone_number && data.phone_provider === 'twilio') {
+    releaseTwilioNumber(data.phone_number)
   }
 
   return Response.json({ success: true })
