@@ -1,6 +1,7 @@
 import Navigation from '@/components/Navigation'
 import HeroSection from '@/components/HeroSection'
 import FeatureCards from '@/components/FeatureCards'
+import PricingSection from '@/components/PricingSection'
 import OpenClawSection from '@/components/OpenClawSection'
 import WaitlistSection from '@/components/WaitlistSection'
 
@@ -21,6 +22,7 @@ export default function Home() {
       <main className="flex-grow pt-[100px] flex flex-col items-center">
         <HeroSection />
         <FeatureCards />
+        <PricingSection />
         <OpenClawSection />
         <WaitlistSection />
       </main>
