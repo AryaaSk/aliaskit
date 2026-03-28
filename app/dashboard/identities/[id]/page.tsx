@@ -79,6 +79,7 @@ export default function IdentityDetailPage() {
   const [smsPage, setSmsPage] = useState(1)
   const [smsTotal, setSmsTotal] = useState(0)
   const [loadingSms, setLoadingSms] = useState(false)
+  const [smsTo, setSmsTo] = useState('')
   const [smsBody, setSmsBody] = useState('')
   const [sendingSms, setSendingSms] = useState(false)
   const [smsSendError, setSmsSendError] = useState('')
@@ -211,7 +212,7 @@ export default function IdentityDetailPage() {
     const res = await fetch(`/api/dashboard/identities/${id}/sms`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: smsBody }),
+      body: JSON.stringify({ to: smsTo, message: smsBody }),
     })
     setSendingSms(false)
     if (!res.ok) {
@@ -222,6 +223,10 @@ export default function IdentityDetailPage() {
       setSmsPage(1)
       loadSms(1)
     }
+  }
+
+  function handleSmsReply(from: string) {
+    setSmsTo(from)
   }
 
   function switchTab(t: 'overview' | 'email' | 'sms') {
@@ -681,6 +686,15 @@ export default function IdentityDetailPage() {
                             <span className="text-xs" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
                               {new Date(msg.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
+                            {!isOutbound && msg.from && (
+                              <button
+                                onClick={() => handleSmsReply(msg.from!)}
+                                className="text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                style={{ color: '#00F0FF', fontFamily: 'var(--font-outfit)' }}
+                              >
+                                reply
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeleteSms(msg.id)}
                               className="text-xs opacity-0 group-hover:opacity-100 transition-opacity"
@@ -711,28 +725,39 @@ export default function IdentityDetailPage() {
                     {smsSendError}
                   </p>
                 )}
-                <form onSubmit={handleSendSms} className="flex items-end gap-3">
-                  <textarea
-                    value={smsBody}
-                    onChange={e => setSmsBody(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSendSms(e as unknown as FormEvent)
-                      }
-                    }}
-                    rows={2}
-                    placeholder="Type a message… (Enter to send)"
-                    className="flex-1 px-3 py-2 text-sm resize-none"
-                    style={inputStyle({ borderRadius: 10 })}
+                <form onSubmit={handleSendSms} className="flex flex-col gap-2">
+                  <input
+                    type="tel"
+                    value={smsTo}
+                    onChange={e => setSmsTo(e.target.value)}
+                    required
+                    placeholder="To: +1234567890"
+                    className="px-3 py-1.5 text-sm"
+                    style={inputStyle({ borderRadius: 8 })}
                   />
-                  <button
-                    type="submit"
-                    disabled={sendingSms || !smsBody.trim()}
-                    className="btn-cyber px-4 py-2 text-xs flex-shrink-0 disabled:opacity-40"
-                  >
-                    {sendingSms ? '…' : 'Send'}
-                  </button>
+                  <div className="flex items-end gap-3">
+                    <textarea
+                      value={smsBody}
+                      onChange={e => setSmsBody(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault()
+                          handleSendSms(e as unknown as FormEvent)
+                        }
+                      }}
+                      rows={2}
+                      placeholder="Type a message… (Enter to send)"
+                      className="flex-1 px-3 py-2 text-sm resize-none"
+                      style={inputStyle({ borderRadius: 10 })}
+                    />
+                    <button
+                      type="submit"
+                      disabled={sendingSms || !smsBody.trim() || !smsTo.trim()}
+                      className="btn-cyber px-4 py-2 text-xs flex-shrink-0 disabled:opacity-40"
+                    >
+                      {sendingSms ? '…' : 'Send'}
+                    </button>
+                  </div>
                 </form>
               </div>
             </>
