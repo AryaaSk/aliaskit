@@ -147,9 +147,20 @@ function LoginForm() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
-              Password
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium" style={{ color: '#94a3b8', fontFamily: 'var(--font-outfit)' }}>
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs transition-colors"
+                style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#00F0FF')}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = '#475569')}
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               type="password"
               value={password}

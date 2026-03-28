@@ -18,6 +18,10 @@ export default function AuthCallbackPage() {
     }
 
     async function handleCallback() {
+      // Detect recovery flow from query param set by resetPasswordForEmail redirectTo
+      const searchParams = new URLSearchParams(window.location.search)
+      const flowType = searchParams.get('type')
+
       // 1. Try to parse tokens directly from hash fragment (implicit flow)
       const hash = window.location.hash.substring(1)
       if (hash) {
@@ -34,7 +38,12 @@ export default function AuthCallbackPage() {
             setSessionCookies(data.session)
             // Clear the hash from URL before navigating
             window.history.replaceState(null, '', window.location.pathname)
-            router.replace('/dashboard')
+            // If this is a password recovery flow, send to reset-password page
+            if (flowType === 'recovery') {
+              router.replace('/reset-password')
+            } else {
+              router.replace('/dashboard')
+            }
             return
           }
           if (error) {
@@ -54,7 +63,11 @@ export default function AuthCallbackPage() {
       }
       if (session) {
         setSessionCookies(session)
-        router.replace('/dashboard')
+        if (flowType === 'recovery') {
+          router.replace('/reset-password')
+        } else {
+          router.replace('/dashboard')
+        }
         return
       }
 
