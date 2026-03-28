@@ -302,7 +302,7 @@ try {
 
       <Heading2>Common Issues & Troubleshooting</Heading2>
 
-      <Heading3>Issue: "Unauthorized" on every request</Heading3>
+      <Heading3>Issue: &quot;Unauthorized&quot; on every request</Heading3>
       <P>
         <strong>Cause:</strong> API key is missing or malformed.
       </P>
@@ -316,7 +316,7 @@ echo $ALIASKIT_API_KEY
 # Should output: ak_live_...
       `}</CodeBlock>
 
-      <Heading3>Issue: "Identity not found" when it should exist</Heading3>
+      <Heading3>Issue: &quot;Identity not found&quot; when it should exist</Heading3>
       <P>
         <strong>Cause:</strong> The identity was created with a different API key.
       </P>
@@ -326,7 +326,7 @@ echo $ALIASKIT_API_KEY
 
       <Heading3>Issue: Rate limit errors during polling</Heading3>
       <P>
-        <strong>Cause:</strong> You're polling too frequently for new messages.
+        <strong>Cause:</strong> You&apos;re polling too frequently for new messages.
       </P>
       <P>
         <strong>Fix:</strong> Implement backoff between polls. Start with 2-5 second intervals and increase if you hit rate limits.

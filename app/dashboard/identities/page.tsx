@@ -27,7 +27,26 @@ export default function IdentitiesPage() {
     setLoading(false)
   }
 
-  useEffect(() => { loadIdentities() }, [])
+  useEffect(() => {
+    let active = true
+
+    async function loadInitialIdentities() {
+      const res = await fetch('/api/dashboard/identities')
+      if (!active) return
+
+      if (res.ok) {
+        const { data } = await res.json()
+        if (!active) return
+        setIdentities(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadInitialIdentities()
+    return () => {
+      active = false
+    }
+  }, [])
 
   async function createIdentity() {
     setCreating(true)

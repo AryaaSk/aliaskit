@@ -123,9 +123,9 @@ export default function ConceptsPage() {
       <Heading3>How email works</Heading3>
       <BulletList
         items={[
-          <>Email arrives at your identity's address (e.g., jordan.riley@aliaskit.to)</>,
+          <>Email arrives at your identity&apos;s address (e.g., jordan.riley@aliaskit.to)</>,
           <>Cloudflare Email Workers catch the incoming mail at the MX record level</>,
-          <>The worker forwards it to AliasKit's API, which parses and stores the message in the database</>,
+          <>The worker forwards it to AliasKit&apos;s API, which parses and stores the message in the database</>,
           <>Your app polls the email list endpoint to retrieve messages and extract verification codes</>,
         ]}
       />
@@ -135,7 +135,7 @@ export default function ConceptsPage() {
       </P>
       <Heading3>Sending email</Heading3>
       <P>
-        You can also send emails <strong>from</strong> the identity's provisioned address. Outbound emails are sent via Resend,
+        You can also send emails <strong>from</strong> the identity&apos;s provisioned address. Outbound emails are sent via Resend,
         which ensures good deliverability and reputation. All outbound mail is logged for your records.
       </P>
 
@@ -149,7 +149,7 @@ export default function ConceptsPage() {
       <BulletList
         items={[
           <>An SMS arrives at the provisioned phone number</>,
-          <>Plivo's webhook notifies AliasKit's API of the incoming message</>,
+          <>Plivo&apos;s webhook notifies AliasKit&apos;s API of the incoming message</>,
           <>The API parses and stores the SMS in the database, linked to the identity</>,
           <>Your app polls the SMS list endpoint to retrieve messages</>,
         ]}
@@ -193,7 +193,7 @@ export default function ConceptsPage() {
         items={[
           <>Each agent gets its own API key</>,
           <>Agents can create and manage their own identities</>,
-          <>No agent can see another agent's data</>,
+          <>No agent can see another agent&apos;s data</>,
           <>The parent system can manage all agents with a master API key</>,
         ]}
       />
@@ -206,9 +206,9 @@ export default function ConceptsPage() {
       <Heading3>Common use cases</Heading3>
       <BulletList
         items={[
-          <><strong>Agent framework</strong> — e.g., "openclaw" or "custom" for agent tracking</>,
-          <><strong>Purpose</strong> — e.g., "github-signup" or "email-verification-test"</>,
-          <><strong>Campaign</strong> — e.g., "spring-launch" or "beta-cohort-2"</>,
+          <><strong>Agent framework</strong> — e.g., &quot;openclaw&quot; or &quot;custom&quot; for agent tracking</>,
+          <><strong>Purpose</strong> — e.g., &quot;github-signup&quot; or &quot;email-verification-test&quot;</>,
+          <><strong>Campaign</strong> — e.g., &quot;spring-launch&quot; or &quot;beta-cohort-2&quot;</>,
           <><strong>External ID</strong> — link to an identity in your own system</>,
         ]}
       />

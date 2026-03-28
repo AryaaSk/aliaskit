@@ -260,7 +260,7 @@ export default function ApiReferencePage() {
       `}</CodeBlock>
 
       <Heading3 id="post-emails">POST /v1/identities/:id/emails</Heading3>
-      <P>Send an email from the identity's provisioned address.</P>
+      <P>Send an email from the identity&apos;s provisioned address.</P>
       <Table>
         <ParamRow name="to"        type="string" required description="Recipient address" />
         <ParamRow name="subject"   type="string" description="Email subject line" />
@@ -270,7 +270,7 @@ export default function ApiReferencePage() {
 
       {/* ── SMS ── */}
       <Heading2 id="sms">SMS</Heading2>
-      <P>Inbound SMS messages are stored when Plivo delivers them to the identity's phone number.</P>
+      <P>Inbound SMS messages are stored when Plivo delivers them to the identity&apos;s phone number.</P>
 
       <Route method="GET"    path="/v1/identities/:id/sms"              description="List SMS messages (paginated)" />
       <Route method="GET"    path="/v1/identities/:id/sms/:sms_id"      description="Get a single SMS" />

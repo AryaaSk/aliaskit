@@ -35,7 +35,26 @@ export default function ApiKeysPage() {
     setLoading(false)
   }
 
-  useEffect(() => { loadKeys() }, [])
+  useEffect(() => {
+    let active = true
+
+    async function loadInitialKeys() {
+      const res = await fetch('/api/dashboard/api-keys')
+      if (!active) return
+
+      if (res.ok) {
+        const { data } = await res.json()
+        if (!active) return
+        setKeys(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    void loadInitialKeys()
+    return () => {
+      active = false
+    }
+  }, [])
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault()
