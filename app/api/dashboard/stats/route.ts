@@ -12,6 +12,13 @@ export async function GET(request: Request) {
     supabase.from('api_keys').select('revoked_at'),
   ])
 
+  if (identitiesRes.error || apiKeysRes.error) {
+    return Response.json(
+      { error: (identitiesRes.error ?? apiKeysRes.error)?.message },
+      { status: 500 }
+    )
+  }
+
   const identities = identitiesRes.data ?? []
   const apiKeys = apiKeysRes.data ?? []
 
