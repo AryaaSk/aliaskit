@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { getSupabaseServerClient } from '@/lib/supabase-server'
-import { timingSafeEqual, createHmac } from 'crypto'
+import { timingSafeEqual } from 'crypto'
 
 const WEBHOOK_SECRET = process.env.CLOUDFLARE_EMAIL_WEBHOOK_SECRET ?? ''
 
