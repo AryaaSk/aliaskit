@@ -418,7 +418,7 @@ SUPABASE_SERVICE_ROLE_KEY=...        # for server-side DB writes
 PLIVO_AUTH_ID=...
 PLIVO_AUTH_TOKEN=...
 PLIVO_SMS_WEBHOOK_SECRET=...         # HMAC for inbound SMS verification
-CLOUDFLARE_EMAIL_WEBHOOK_SECRET=...  # shared secret for inbound email
+RESEND_WEBHOOK_SECRET=...            # Resend webhook signing secret for inbound email
 RESEND_API_KEY=...                   # for outbound email (if using Resend)
 ```
 
