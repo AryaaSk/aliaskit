@@ -12,17 +12,28 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const supabase = getSupabaseClient()
 
-    // onAuthStateChange fires once the token in the URL hash is exchanged for a session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
-        document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
-        router.replace('/dashboard')
-      }
-    })
+    async function handleCallback() {
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
 
-    // Also check for an existing session in case the exchange already happened
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (code) {
+        // Explicitly exchange the PKCE code for a session
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+        if (error) {
+          setErrorMsg(error.message)
+          setStatus('error')
+          return
+        }
+        if (data.session) {
+          document.cookie = `ak-access-token=${data.session.access_token}; path=/; max-age=3600; SameSite=Lax`
+          document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
+          router.replace('/dashboard')
+          return
+        }
+      }
+
+      // No code in URL — check for an existing session (e.g. email confirmation links)
+      const { data: { session }, error } = await supabase.auth.getSession()
       if (error) {
         setErrorMsg(error.message)
         setStatus('error')
@@ -32,19 +43,15 @@ export default function AuthCallbackPage() {
         document.cookie = `ak-access-token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`
         document.cookie = 'ak-session=1; path=/; max-age=86400; SameSite=Lax'
         router.replace('/dashboard')
+        return
       }
-    })
 
-    // If no session event fires within 5 s, surface an error
-    const timeout = setTimeout(() => {
+      // No code and no session — something went wrong
       setErrorMsg('Verification link expired or invalid.')
       setStatus('error')
-    }, 5000)
-
-    return () => {
-      subscription.unsubscribe()
-      clearTimeout(timeout)
     }
+
+    handleCallback()
   }, [router])
 
   if (status === 'error') {
