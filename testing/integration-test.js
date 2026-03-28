@@ -9,8 +9,8 @@ const BASE_URL = 'http://localhost:3000';
 const SCREENSHOTS_DIR = path.join(__dirname, 'screenshots');
 const RESULTS = [];
 
-// Test credentials
-const TEST_EMAIL = 'qa-test-aliaskit@mailinator.com';
+// Test credentials (pre-confirmed account via Supabase Admin API)
+const TEST_EMAIL = 'qa-lead@aliaskit-test.com';
 const TEST_PASSWORD = 'QAtest2026!secure';
 
 function log(msg) {
