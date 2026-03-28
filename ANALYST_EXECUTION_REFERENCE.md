@@ -12,6 +12,8 @@
 ### By Phase
 
 **Phase 1: Survey Monitoring (Week 1-2)**
+- `SURVEY_MOMENTUM_DASHBOARD.md` — **Daily check schedule + launch day workflow**
+- `HYPOTHESIS_VALIDATION_SCORING.md` — **Real-time hypothesis confidence scoring**
 - `MARKET_VALIDATION_TRACKING.md` — Weekly timeline + response tracking templates
 - `SURVEY_EXECUTION_CHECKLIST.md` — Daily monitoring checklist + escalation triggers
 - `PHASE_1_SURVEY_EXECUTION.md` — Survey design reference (for context)
@@ -32,22 +34,67 @@
 ### Week 1: Launch & Momentum (2026-03-31 — 2026-04-04)
 
 **Friday 2026-03-31 (Launch Day)**
-- [ ] Monitor survey first responses (9am, 12pm, 5pm checks)
-- [ ] Validate response quality (Q1-Q10 all answered)
-- [ ] Track channel attribution (PH, Discord, Twitter, Direct)
-- [ ] Post end-of-day status: "[X] responses on launch day"
+
+*Pre-Launch (9:00am PT):*
+- [ ] Typeform link verified (click test)
+- [ ] Response tracking spreadsheet open + shared
+- [ ] Slack notifications enabled
+- [ ] All messaging finalized
+
+*Launch Window (10:00am-5:00pm PT):*
+- [ ] 10:00am: Monitor Product Hunt post
+- [ ] 12:00pm: First momentum check (log responses + channels)
+- [ ] 2:00pm: Mid-day quality check (spot-check for spam)
+- [ ] 5:00pm: EOD analysis + forecast
+
+*End of Day Report:*
+- Total responses (target: 15-30 on launch day)
+- By channel (PH: 10-20, Discord: 3-5, Direct: 2-5)
+- Quality signals (legitimate vs. spam)
+- Issues encountered + resolutions
+- Monday forecast
 
 **Monday-Friday (Momentum Week)**
-- [ ] 9am daily: Response count + breakdown
-  - Total responses + daily new
-  - By channel (PH, HN, Discord, Twitter, Direct)
-  - By segment (Indie, Startup, Enterprise, OSS)
-- [ ] Track framework adoption % (preliminary from Q1)
-- [ ] Flag strong candidates (Q9 score 8+)
-- [ ] Slack standup each morning
 
-**Wednesday 2026-04-02 (Momentum Check)**
-- [ ] Target: 20+ responses (success indicator)
+*Daily 3-Point Check Schedule:*
+- [ ] **9:00am PT:** Overnight responses + quality spot check + Product Hunt engagement
+  - Total responses + daily new
+  - By channel breakdown
+  - Framework adoption % (from Q1)
+  - Any issues overnight
+
+- [ ] **3:00pm PT:** Cumulative analysis + early intervention check
+  - Completion rate (% finishing full survey)
+  - Segment representation trending
+  - Hypothesis confidence scores (using HYPOTHESIS_VALIDATION_SCORING.md)
+  - Emerging patterns + warning signals
+
+- [ ] **5:00pm PT:** End-of-day report + next day planning
+  - Daily momentum report (use SURVEY_MOMENTUM_DASHBOARD.md template)
+  - Forecast adjustment for next week
+  - Any escalation triggers needed
+  - Post to Slack #survey-momentum channel
+
+*Hypothesis Validation Tracking (Real-Time):*
+- Score each response against 5 hypotheses using HYPOTHESIS_VALIDATION_SCORING.md
+- Calculate cumulative confidence % for each hypothesis
+- Track: H1 (Bundling), H2 (DX), H3 (Framework), H4 (Enterprise), H5 (Phone)
+- Flag if any hypothesis <50% confidence (escalation trigger)
+
+**Wednesday 2026-04-02 (Momentum Checkpoint)**
+- [ ] **Target: 25-35 responses** (momentum confirmed)
+- [ ] If <10 responses: Escalate to Growth Lead immediately
+  - Activate contingency plan (email outreach, incentive boost)
+  - Consider media pivot to HN + indie communities
+- [ ] If 25+: Confirm distribution strategy working, proceed normally
+
+**Friday 2026-04-04 (Week 1 Close + Detailed Analysis)**
+- [ ] **Target: 30-50 responses** (strong Week 1)
+- [ ] Full segment breakdown analysis (Indie %, Startup %, Enterprise %, OSS %)
+- [ ] Framework adoption summary (LangChain %, Anthropic %, OpenClaw %)
+- [ ] All 5 hypothesis confidence scores calculated
+- [ ] Early interview candidates: 5-10 flagged (Q9 score 8+)
+- [ ] Post detailed ALI-36 update: Week 1 complete + hypothesis validation scores
 - [ ] If <10: Escalate to Growth Lead immediately
 - [ ] If 20+: Confirm distribution strategy working
 
@@ -170,6 +217,15 @@ PRELIMINARY ANALYSIS (Week 1-2):
 - Pricing signal: Average WTP $[X]/month
 - NPS (Q9): [X.X/10] average
 
+HYPOTHESIS VALIDATION SCORES (Real-Time):
+- H1 (Bundling): [__]% confidence (target: 70%+)
+- H2 (DX Drives): [__]% confidence (target: 70%+)
+- H3 (Framework Integration): [__]% confidence (target: 70%+)
+- H4 (Enterprise Q3+): [__]% confidence (target: 70%+)
+- H5 (Phone Nice-to-Have): [__]% confidence (target: 70%+)
+
+⚠️ ESCALATION: If any hypothesis <50%, strategy pivot needed
+
 INTERVIEW CANDIDATES IDENTIFIED:
 - A (Q9 8+): [X] strong candidates
 - B (Q9 5-7): [X] medium candidates
@@ -177,6 +233,7 @@ INTERVIEW CANDIDATES IDENTIFIED:
 
 STATUS:
 - Momentum: [On track / Needs boost / Escalating]
+- Hypothesis validation: [Green/Yellow/Red]
 - Next action: [What's needed tomorrow]
 ```
 
