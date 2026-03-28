@@ -25,7 +25,11 @@ function LoginForm() {
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (authError) {
-      setError(authError.message)
+      if (authError.message.toLowerCase().includes('email not confirmed')) {
+        setError('Please confirm your email before signing in — check your inbox for the verification link.')
+      } else {
+        setError(authError.message)
+      }
       setLoading(false)
       return
     }
