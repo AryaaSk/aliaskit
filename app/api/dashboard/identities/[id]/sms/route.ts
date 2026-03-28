@@ -61,11 +61,10 @@ export async function POST(request: Request, { params }: Ctx) {
     return Response.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const to = body.to as string | undefined
-  const message = body.message as string | undefined
+  const toOverride = body.to as string | undefined
+  const message = (body.body ?? body.message) as string | undefined
 
-  if (!to) return Response.json({ error: 'Missing "to" field' }, { status: 400 })
-  if (!message) return Response.json({ error: 'Missing "message" field' }, { status: 400 })
+  if (!message) return Response.json({ error: 'Missing "body" field' }, { status: 400 })
 
   const supabase = getSupabaseServerClient()
 
@@ -82,6 +81,24 @@ export async function POST(request: Request, { params }: Ctx) {
 
   if (!identity.phone_number) {
     return Response.json({ error: 'Identity has no phone number' }, { status: 400 })
+  }
+
+  // Resolve recipient: explicit override or last inbound sender
+  let to = toOverride
+  if (!to) {
+    const { data: lastInbound } = await supabase
+      .from('sms_messages')
+      .select('from')
+      .eq('identity_id', id)
+      .eq('direction', 'inbound')
+      .order('received_at', { ascending: false })
+      .limit(1)
+      .single()
+    to = lastInbound?.from ?? undefined
+  }
+
+  if (!to) {
+    return Response.json({ error: 'No recipient — specify "to" or receive an inbound SMS first' }, { status: 400 })
   }
 
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
