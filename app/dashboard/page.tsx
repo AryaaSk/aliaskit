@@ -29,11 +29,11 @@ export default function DashboardPage() {
     })
   }, [])
 
-  const cards = stats
+  const cards: { label: string; value: number; color: string; href: string | null }[] = stats
     ? [
         { label: 'Total Identities', value: stats.totalIdentities, color: '#00F0FF', href: '/dashboard/identities' },
         { label: 'Active Identities', value: stats.activeIdentities, color: '#39FF14', href: '/dashboard/identities' },
-        { label: 'Messages Today', value: stats.messagesToday, color: '#00F0FF', href: '/dashboard/identities' },
+        { label: 'Messages Today', value: stats.messagesToday, color: '#00F0FF', href: null },
         { label: 'Active Keys', value: stats.activeApiKeys, color: '#39FF14', href: '/dashboard/api-keys' },
       ]
     : []
@@ -65,9 +65,9 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {cards.map(({ label, value, color, href }) => (
-            <Link key={label} href={href}>
-              <div className="glass-panel p-6 transition-all cursor-pointer hover:border-white/10">
+          {cards.map(({ label, value, color, href }) => {
+            const cardContent = (
+              <div className={`glass-panel p-6 transition-all ${href ? 'cursor-pointer hover:border-white/10' : ''}`}>
                 <p
                   className="text-xs uppercase tracking-wider mb-3"
                   style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
@@ -81,8 +81,13 @@ export default function DashboardPage() {
                   {value.toLocaleString()}
                 </p>
               </div>
-            </Link>
-          ))}
+            )
+            return href ? (
+              <Link key={label} href={href}>{cardContent}</Link>
+            ) : (
+              <div key={label}>{cardContent}</div>
+            )
+          })}
         </div>
       )}
 

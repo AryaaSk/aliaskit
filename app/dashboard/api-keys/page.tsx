@@ -25,6 +25,8 @@ export default function ApiKeysPage() {
   const [newKey, setNewKey] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
+  const [confirmingRevoke, setConfirmingRevoke] = useState<string | null>(null)
+  const [showRevoked, setShowRevoked] = useState(false)
 
   async function loadKeys() {
     const res = await fetch('/api/dashboard/api-keys')
@@ -80,7 +82,10 @@ export default function ApiKeysPage() {
 
   async function revokeKey(id: string) {
     const res = await fetch(`/api/dashboard/api-keys/${id}`, { method: 'DELETE' })
-    if (res.ok) await loadKeys()
+    if (res.ok) {
+      setConfirmingRevoke(null)
+      await loadKeys()
+    }
   }
 
   function copyKey() {
@@ -246,88 +251,124 @@ export default function ApiKeysPage() {
             </p>
           </div>
         ) : (
-          <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                {['Label', 'Prefix', 'Scopes', 'Last Used', 'Status', ''].map((h, i) => (
-                  <th
-                    key={i}
-                    className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                    style={{ color: '#475569', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {keys.map(key => (
-                <tr
-                  key={key.id}
-                  className="border-b"
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.04)',
-                    opacity: key.revoked_at ? 0.4 : 1,
-                  }}
-                >
-                  <td className="px-5 py-3 text-sm" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
-                    {key.label}
-                  </td>
-                  <td className="px-5 py-3">
-                    <code className="text-xs" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
-                      {key.key_prefix}…
-                    </code>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {key.scopes.map(s => (
-                        <span
-                          key={s}
-                          className="text-xs px-2 py-0.5"
-                          style={{
-                            background: 'rgba(0, 240, 255, 0.07)',
-                            border: '1px solid rgba(0, 240, 255, 0.15)',
-                            borderRadius: 3,
-                            color: '#64748B',
-                            fontFamily: 'var(--font-jetbrains-mono)',
-                          }}
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
-                    {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
-                  </td>
-                  <td className="px-5 py-3">
-                    <span
-                      className="text-xs"
-                      style={{
-                        color: key.revoked_at ? '#FF0055' : '#39FF14',
-                        fontFamily: 'var(--font-jetbrains-mono)',
-                      }}
+          <>
+            <table className="w-full text-sm" style={{ borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  {['Label', 'Prefix', 'Scopes', 'Last Used', 'Status', ''].map((h, i) => (
+                    <th
+                      key={i}
+                      className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                      style={{ color: '#475569', fontFamily: 'var(--font-outfit)', fontWeight: 500 }}
                     >
-                      {key.revoked_at ? 'REVOKED' : 'ACTIVE'}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    {!key.revoked_at && (
-                      <button
-                        onClick={() => revokeKey(key.id)}
-                        className="text-xs transition-colors"
-                        style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
-                        onMouseEnter={e => ((e.target as HTMLButtonElement).style.color = '#FF0055')}
-                        onMouseLeave={e => ((e.target as HTMLButtonElement).style.color = '#64748B')}
-                      >
-                        revoke
-                      </button>
-                    )}
-                  </td>
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {keys.filter(k => showRevoked || !k.revoked_at).map(key => (
+                  <tr
+                    key={key.id}
+                    className="border-b"
+                    style={{
+                      borderColor: 'rgba(255, 255, 255, 0.04)',
+                      opacity: key.revoked_at ? 0.4 : 1,
+                    }}
+                  >
+                    <td className="px-5 py-3 text-sm" style={{ color: '#E2E8F0', fontFamily: 'var(--font-outfit)' }}>
+                      {key.label}
+                    </td>
+                    <td className="px-5 py-3">
+                      <code className="text-xs" style={{ color: '#00F0FF', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                        {key.key_prefix}…
+                      </code>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {key.scopes.map(s => (
+                          <span
+                            key={s}
+                            className="text-xs px-2 py-0.5"
+                            style={{
+                              background: 'rgba(0, 240, 255, 0.07)',
+                              border: '1px solid rgba(0, 240, 255, 0.15)',
+                              borderRadius: 3,
+                              color: '#64748B',
+                              fontFamily: 'var(--font-jetbrains-mono)',
+                            }}
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-5 py-3 text-sm" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>
+                      {key.last_used_at ? new Date(key.last_used_at).toLocaleDateString() : 'Never'}
+                    </td>
+                    <td className="px-5 py-3">
+                      <span
+                        className="text-xs"
+                        style={{
+                          color: key.revoked_at ? '#FF0055' : '#39FF14',
+                          fontFamily: 'var(--font-jetbrains-mono)',
+                        }}
+                      >
+                        {key.revoked_at ? 'REVOKED' : 'ACTIVE'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      {!key.revoked_at && (
+                        confirmingRevoke === key.id ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => revokeKey(key.id)}
+                              className="text-xs transition-colors"
+                              style={{ color: '#FF0055', fontFamily: 'var(--font-jetbrains-mono)' }}
+                            >
+                              confirm?
+                            </button>
+                            <button
+                              onClick={() => setConfirmingRevoke(null)}
+                              className="text-xs transition-colors"
+                              style={{ color: '#475569', fontFamily: 'var(--font-jetbrains-mono)' }}
+                            >
+                              cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmingRevoke(key.id)}
+                            className="text-xs transition-colors"
+                            style={{ color: '#64748B', fontFamily: 'var(--font-jetbrains-mono)' }}
+                            onMouseEnter={e => ((e.target as HTMLButtonElement).style.color = '#FF0055')}
+                            onMouseLeave={e => ((e.target as HTMLButtonElement).style.color = '#64748B')}
+                          >
+                            revoke
+                          </button>
+                        )
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {keys.some(k => k.revoked_at) && (
+              <div className="px-5 py-3" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                <button
+                  onClick={() => setShowRevoked(v => !v)}
+                  className="text-xs transition-colors"
+                  style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}
+                  onMouseEnter={e => ((e.target as HTMLButtonElement).style.color = '#94a3b8')}
+                  onMouseLeave={e => ((e.target as HTMLButtonElement).style.color = '#475569')}
+                >
+                  {showRevoked
+                    ? 'hide revoked'
+                    : `+ show ${keys.filter(k => k.revoked_at).length} revoked`}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

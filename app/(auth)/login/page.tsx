@@ -116,7 +116,7 @@ function LoginForm() {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 my-1">
+        <div className="flex items-center gap-3 my-4">
           <div className="flex-1 h-px" style={{ background: 'rgba(0, 240, 255, 0.1)' }} />
           <span className="text-xs" style={{ color: '#475569', fontFamily: 'var(--font-outfit)' }}>or</span>
           <div className="flex-1 h-px" style={{ background: 'rgba(0, 240, 255, 0.1)' }} />
