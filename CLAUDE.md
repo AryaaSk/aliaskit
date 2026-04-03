@@ -1,84 +1,30 @@
-@AGENTS.md
+# AliasKit
 
-## Git & Deployment Policy
+Two products:
+1. **@aliaskit/test** — TypeScript SDK for testing signup/verification flows with real email + SMS
+2. **AliasKit Identity API** — REST API powering the SDK (Next.js + Supabase + Resend + Twilio)
 
-### Branching
-
-- Work on **feature branches**, not directly on `main`
-- Branch naming: `feat/<short-description>`, `fix/<short-description>`, `chore/<short-description>`
-- Commit frequently with descriptive messages
-- Push to remote at least once per completed task
-
-### Merging to main
-
-- **Do NOT merge to main yourself** — the Release Engineer handles all merges
-- When your feature branch is ready, push it to remote and comment on the issue: "Ready for merge: branch `feat/xyz`, build passes"
-- The Release Engineer will review, request board approval, and merge
-- Never force-push to `main`
-- Never force-push anywhere
-
-### Deployment
-
-- Pushing to `main` on GitHub (aryaask) auto-deploys to **aliaskit.com** via Vercel
-- This means every merge to main is a production deployment — treat it accordingly
-- Test locally before merging (`npm run build` must pass)
-
-### Pull Requests
-
-- Create PRs for feature branches when ready for review
-- Include a summary of what changed and why
-- Tag the relevant reviewer (Lead Engineer for code, CTO for architecture)
-
-## Task Updates (MANDATORY)
-
-When you finish working on a task, you MUST do ALL of the following before your heartbeat ends:
-
-1. **Update the issue status** — set it to `done` if complete, `blocked` if stuck
-2. **Leave a comment** on the issue summarizing what you did: what code you wrote, what branch it's on, what files changed
-3. **If requesting merge approval**, list the branch name, number of commits, and a summary of changes
-
-Failing to update task status is unacceptable. The board cannot see your work if you don't report it. A task with no status update looks like no work was done, even if you wrote 500 lines of code.
-
-## File Organization
-
-- Never create marketing, strategy, or planning documents in the repo root
-- Keep only essential config files in the root (README.md, SPEC.md, CLAUDE.md, AGENTS.md)
-
-## Documents Policy
-
-All company documents (plans, playbooks, strategies, guides, reports, analyses) MUST be stored as files in the `docs/` folder within this repo — NOT in Paperclip issue documents.
-
-### Folder structure
+## Project Structure
 
 ```
-docs/
-├── marketing/       # GTM, content calendars, social media, launch plans
-├── engineering/     # Architecture decisions, API docs, technical guides
-├── strategy/        # Competitive analysis, market validation, investor materials
-├── playbooks/       # Operational playbooks, onboarding, processes
-└── reports/         # Status reports, test reports, QA results
+analysis/        — Requirements, research, design docs
+design/          — Wireframes, architecture decisions, UI specs
+implementation/  — The codebase (Next.js app + SDK package)
+testing/         — Test plans, QA reports
 ```
 
-### How to reference documents in issues
+## Stack
 
-When you create or update a document, reference it in the relevant Paperclip issue by file path:
+- Next.js (App Router) on Vercel
+- Supabase (Postgres + Auth)
+- Resend (email send/receive)
+- Twilio (SMS send/receive)
+- Playwright (browser automation in SDK)
 
-> "See `docs/engineering/api-design.md` for the full API specification."
+## Deployment
 
-Do NOT paste full document contents into issue descriptions or Paperclip issue documents. Keep issues lightweight — use file paths as references to the actual documents in `docs/`.
-
-### When to create a document
-
-- Plans that will be referenced across multiple issues
-- Guides or playbooks that are reusable
-- Reports that need to be reviewed later
-- Any content longer than a few paragraphs
-
-### When NOT to create a document
-
-- Quick status updates — just comment on the issue
-- One-off notes — just comment on the issue
-- Task-specific context that won't be reused — put it in the issue description
+- Pushing to `main` auto-deploys to aliaskit.com via Vercel
+- `npm run build` must pass before merging
 
 ## gstack
 
